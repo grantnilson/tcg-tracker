@@ -26,7 +26,7 @@ export default function Account({ session }: { session: Session }) {
 
       let { data, error, status } = await supabase
         .from("profiles")
-        .select(`username, website, avatar_url`)
+        .select(`username, avatar_url`)
         .eq("id", user.id)
         .single();
 
@@ -81,6 +81,19 @@ export default function Account({ session }: { session: Session }) {
 
   return (
     <div className="form-widget">
+      <div className="form-widget">
+        {/* Add to the body */}
+        <Avatar
+          uid={user.id}
+          url={avatar_url}
+          size={150}
+          onUpload={(url) => {
+            setAvatarUrl(url);
+            updateProfile({ username, website, avatar_url: url });
+          }}
+        />
+        {/* ... */}
+      </div>
       <div>
         <label htmlFor="email">Email</label>
         <input id="email" type="text" value={session.user.email} disabled />

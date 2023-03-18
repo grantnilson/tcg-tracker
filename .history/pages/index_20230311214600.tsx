@@ -13,7 +13,12 @@ const Home = () => {
       {!session ? (
         <div className="row">
           <div className="col-6">
-            <h1 className="header">TCG-Tracker Application</h1>
+            <h1 className="header">Supabase Auth + Storage</h1>
+            <p className="">
+              Experience our Auth and Storage through a simple profile
+              management example. Create a user profile and upload an avatar
+              image. Fast, simple, secure.
+            </p>
           </div>
           <div className="col-6 auth-widget">
             <Auth
@@ -25,15 +30,7 @@ const Home = () => {
         </div>
       ) : (
         <nav>
-          <ul>
-            <li>
-              {" "}
-              <Link href="/Accounts">Accounts</Link>
-            </li>
-            <li>
-              <Link href="/Decks">Decks</Link>
-            </li>
-          </ul>
+          <Link href="/Accounts">Accounts</Link>
         </nav>
       )}
     </div>

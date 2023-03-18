@@ -25,15 +25,8 @@ const Home = () => {
         </div>
       ) : (
         <nav>
-          <ul>
-            <li>
-              {" "}
-              <Link href="/Accounts">Accounts</Link>
-            </li>
-            <li>
-              <Link href="/Decks">Decks</Link>
-            </li>
-          </ul>
+          <Link href="/Accounts">Accounts</Link>
+          <Link href="/Decks"></Link>
         </nav>
       )}
     </div>
