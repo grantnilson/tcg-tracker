@@ -11,24 +11,24 @@ export interface Database {
     Tables: {
       decks: {
         Row: {
-          deck_id: string
           deck_image_url: string | null
           deck_name: string | null
           elo: number | null
+          id: number
           tier: string | null
         }
         Insert: {
-          deck_id?: string
           deck_image_url?: string | null
           deck_name?: string | null
           elo?: number | null
+          id?: number
           tier?: string | null
         }
         Update: {
-          deck_id?: string
           deck_image_url?: string | null
           deck_name?: string | null
           elo?: number | null
+          id?: number
           tier?: string | null
         }
       }

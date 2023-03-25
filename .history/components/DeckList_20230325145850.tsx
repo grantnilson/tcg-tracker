@@ -18,7 +18,10 @@ export default function DeckList({ session }: { session: Session }) {
 
   useEffect(() => {
     const fetchDecks = async () => {
-      const { data: decks, error } = await supabase.from("decks").select("*");
+      const { data: decks, error } = await supabase
+        .from("decks")
+        .select("*")
+        .order("id", { ascending: true });
 
       if (error) console.log("error : ", error);
       else setDecks(decks);
@@ -56,7 +59,7 @@ export default function DeckList({ session }: { session: Session }) {
 
   return (
     <div className="w-full">
-      <h1 className="mb-12"> Deck List .</h1>
+      <h1 className="mb-12">Todo List.</h1>
       <form
         onSubmit={(e) => {
           e.preventDefault();

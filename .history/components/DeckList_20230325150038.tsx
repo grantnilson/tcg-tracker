@@ -18,7 +18,10 @@ export default function DeckList({ session }: { session: Session }) {
 
   useEffect(() => {
     const fetchDecks = async () => {
-      const { data: decks, error } = await supabase.from("decks").select("*");
+      const { data: decks, error } = await supabase
+        .from("decks")
+        .select("*")
+        .order("id", { ascending: true });
 
       if (error) console.log("error : ", error);
       else setDecks(decks);
