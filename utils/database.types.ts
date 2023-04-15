@@ -16,6 +16,7 @@ export interface Database {
           deck_name: string | null
           elo: number | null
           tier: string | null
+          time_added: string
         }
         Insert: {
           deck_id?: string
@@ -23,6 +24,7 @@ export interface Database {
           deck_name?: string | null
           elo?: number | null
           tier?: string | null
+          time_added?: string
         }
         Update: {
           deck_id?: string
@@ -30,6 +32,7 @@ export interface Database {
           deck_name?: string | null
           elo?: number | null
           tier?: string | null
+          time_added?: string
         }
       }
       profiles: {

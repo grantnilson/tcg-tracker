@@ -5,6 +5,8 @@ import {
   Session,
 } from "@supabase/auth-helpers-react";
 import { Database } from "../utils/database.types";
+import Decks from "@/pages/Decks";
+import { useRouter } from "next/router";
 
 type Decks = Database["public"]["Tables"]["decks"]["Row"];
 
@@ -12,20 +14,24 @@ export default function DeckList({ session }: { session: Session }) {
   const supabase = useSupabaseClient<Database>();
   const [decks, setDecks] = useState<Decks[]>([]);
   const [deckName, setDeckName] = useState("");
+  //const [deckID, setDeckID] = useState("");
   const [errorText, setErrorText] = useState("");
 
   const user = session.user;
 
   useEffect(() => {
     const fetchDecks = async () => {
-      const { data: decks, error } = await supabase.from("decks").select("*");
+      const { data: decks, error } = await supabase
+        .from("decks")
+        .select("*")
+        .order("time_added", { ascending: true });
 
       if (error) console.log("error : ", error);
       else setDecks(decks);
     };
 
     fetchDecks();
-  }, [supabase]);
+  }, [supabase, decks]);
 
   const addDeck = async (deckName: string) => {
     let deckItem = deckName.trim();
@@ -45,10 +51,14 @@ export default function DeckList({ session }: { session: Session }) {
     }
   };
 
-  const deleteDeck = async (id: number) => {
+  const deleteDeck = async (deck_id: string) => {
     try {
-      await supabase.from("decks").delete().eq("id", id).throwOnError();
-      setDecks(decks.filter((x) => x.id != id));
+      await supabase
+        .from("decks")
+        .delete()
+        .eq("deck_id", deck_id)
+        .throwOnError();
+      setDecks(decks.filter((x) => x.deck_id != x.deck_id));
     } catch (error) {
       console.log("error", error);
     }
@@ -56,7 +66,7 @@ export default function DeckList({ session }: { session: Session }) {
 
   return (
     <div className="w-full">
-      <h1 className="mb-12"> Deck List .</h1>
+      <h1 className="mb-12"> Deck List </h1>
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -67,7 +77,7 @@ export default function DeckList({ session }: { session: Session }) {
         <input
           className="rounded w-full p-2"
           type="text"
-          placeholder="make coffee"
+          placeholder="Add Deck"
           value={deckName}
           onChange={(e) => {
             setErrorText("");
@@ -79,13 +89,13 @@ export default function DeckList({ session }: { session: Session }) {
         </button>
       </form>
       {!!errorText && <Alert text={errorText} />}
-      <div className="bg-white shadow overflow-hidden rounded-md">
+      <div className="shadow overflow-hidden rounded-md">
         <ul>
           {decks.map((deck) => (
             <Deck
-              key={deck.id}
+              key={deck.deck_id}
               deck={deck}
-              onDelete={() => deleteDeck(deck.id)}
+              onDelete={() => deleteDeck(deck.deck_id)}
             />
           ))}
         </ul>
@@ -96,43 +106,40 @@ export default function DeckList({ session }: { session: Session }) {
 
 const Deck = ({ deck, onDelete }: { deck: Decks; onDelete: () => void }) => {
   const supabase = useSupabaseClient<Database>();
-  //const [isCompleted, setIsCompleted] = useState(deck.is_complete)
+  const router = useRouter();
 
   return (
-    <li className="w-full block cursor-pointer hover:bg-gray-200 focus:outline-none focus:bg-gray-200 transition duration-150 ease-in-out">
+    <li className="-full block cursor-pointer hover:bg-gray-600 focus:outline-none focus:bg-gray-200 transition duration-150 ease-in-out">
       <div className="flex items-center px-4 py-4 sm:px-6">
         <div className="min-w-0 flex-1 flex items-center">
           <div className="text-sm leading-5 font-medium truncate">
             {deck.deck_name}
           </div>
         </div>
-        <div>
-          <input
-            className="cursor-pointer"
-            //onChange={(e) => toggle()}
-            type="checkbox"
-            //checked={isCompleted ? true : false}
-          />
-        </div>
+
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            //console.log(deck.deck_id);
+            router.push({
+              pathname: "/DeckProfile",
+              query: { deckId: deck.deck_id },
+            });
+          }}
+          className=" ml-2 border-2 hover:border-black rounded"
+        >
+          Profile
+        </button>
         <button
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
             onDelete();
           }}
-          className="w-4 h-4 ml-2 border-2 hover:border-black rounded"
+          className=" ml-2 border-2 hover:border-black rounded"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
-            fill="gray"
-          >
-            <path
-              fillRule="evenodd"
-              d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-              clipRule="evenodd"
-            />
-          </svg>
+          Delete
         </button>
       </div>
     </li>
@@ -140,7 +147,7 @@ const Deck = ({ deck, onDelete }: { deck: Decks; onDelete: () => void }) => {
 };
 
 const Alert = ({ text }: { text: string }) => (
-  <div className="rounded-md bg-red-100 p-4 my-3">
-    <div className="text-sm leading-5 text-red-700">{text}</div>
+  <div className="">
+    <div className="">{text}</div>
   </div>
 );
