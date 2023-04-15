@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   useUser,
   useSupabaseClient,
@@ -13,27 +13,31 @@ type Deck = Database["public"]["Tables"]["decks"]["Row"];
 
 export default function GetDeckProfile({ session }: { session: Session }) {
   const router = useRouter();
-  //console.log("value of deckId: " + router.query.deckId);
-  const routerDeckId = router.query.deckId;
-  console.log("value of deckId: " + routerDeckId);
   const supabase = useSupabaseClient<Database>();
   const [deck, setDeck] = useState<Deck[]>([]);
 
   useEffect(() => {
+    if (!router.isReady) return;
+    const getRouterId = router.query.deckId;
+    console.log("value of deck id from query is : " + getRouterId);
+
     const fetchDeck = async () => {
       const { data: deck, error } = await supabase
         .from("decks")
         .select("*")
-        .match({ deck_id: routerDeckId })
-        .single();
+        .eq("deck_id", getRouterId);
 
       if (error) console.log("error : ", error);
       else setDeck(deck);
     };
-    //console.log("value of deck is : " + deck);
 
     fetchDeck();
-  }, [supabase, , deck]);
+  }, [supabase, router.isReady, router.query.deckId]);
+
+  console.log("dependency values : ");
+  console.log("value of router.isReady : " + router.isReady);
+  console.log("value of router.query.deckId : " + router.query.deckId);
+  console.log("value of deck is  : " + JSON.stringify(deck));
 
   return (
     <div className="w-full">
