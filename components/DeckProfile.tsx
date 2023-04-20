@@ -1,12 +1,6 @@
-import React from "react";
-import { useState, useEffect, useCallback } from "react";
-import {
-  useUser,
-  useSupabaseClient,
-  Session,
-} from "@supabase/auth-helpers-react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
+import { useSupabaseClient, Session } from "@supabase/auth-helpers-react";
 import { Database } from "../utils/database.types";
-import Decks from "@/pages/Decks";
 import { useRouter } from "next/router";
 
 type Deck = Database["public"]["Tables"]["decks"]["Row"];
@@ -26,35 +20,59 @@ export function DeckProfileCard({ deck }: DeckProfileCardProps) {
   );
 }
 
+function LoadingSpinner() {
+  return <p>Loading...</p>;
+}
+
 export default function GetDeckProfile({ session }: { session: Session }) {
   const router = useRouter();
   const supabase = useSupabaseClient<Database>();
+
   const [deck, setDeck] = useState<Deck | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const memoizedDeckId = useMemo(
+    () => router.query.deckId,
+    [router.query.deckId]
+  );
+
+  const isMountedRef = useRef(false);
+  const rendersRef = useRef(0);
 
   useEffect(() => {
-    if (!router.isReady) return;
-    const getRouterId = router.query.deckId;
-    console.log("value of deck id from query is : " + getRouterId);
+    const renders = rendersRef.current;
+    rendersRef.current++;
+    isMountedRef.current = true;
 
     const fetchDeck = async () => {
-      const { data: deck, error } = await supabase
-        .from("decks")
-        .select("*")
-        .eq("deck_id", getRouterId);
+      if (memoizedDeckId) {
+        const { data: deck, error } = await supabase
+          .from("decks")
+          .select("*")
+          .eq("deck_id", memoizedDeckId);
 
-      if (error) console.log("error : ", error);
-      else setDeck(deck[0] || null);
+        if (error) {
+          console.log("error: ", error);
+        } else {
+          if (isMountedRef.current) {
+            setDeck(deck[0] || null);
+            setIsLoading(false);
+          }
+        }
+      }
     };
 
     fetchDeck();
-  }, [supabase, router.isReady, router.query.deckId]);
 
-  console.log("dependency values : ");
-  console.log("value of router.isReady : " + router.isReady);
-  console.log("value of router.query.deckId : " + router.query.deckId);
-  console.log("value of deck is  : " + JSON.stringify(deck));
+    return () => {
+      isMountedRef.current = false;
+      console.log(`Component rendered ${renders + 1} time`);
+    };
+  }, [supabase, memoizedDeckId]);
 
   return (
-    <div className="w-full">{deck && <DeckProfileCard deck={deck} />}</div>
+    <div className="w-full">
+      {isLoading ? LoadingSpinner() : deck && <DeckProfileCard deck={deck} />}
+    </div>
   );
 }
