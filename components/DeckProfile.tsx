@@ -7,6 +7,7 @@ type Deck = Database["public"]["Tables"]["decks"]["Row"];
 
 interface DeckProfileCardProps {
   deck: EditableDeck;
+  deckId: string | undefined;
 }
 
 interface EditableDeck {
@@ -16,23 +17,63 @@ interface EditableDeck {
   time_added: string;
 }
 
-export function DeckProfileCard({ deck }: DeckProfileCardProps) {
+export function DeckProfileCard({ deck, deckId }: DeckProfileCardProps) {
+  //console.log("value of initial deck",)
   const [isEditable, setIsEditable] = useState(false);
   const [editableDeck, setEditableDeck] = useState(deck);
 
+  const [loading, setLoading] = useState(false);
+  const supabase = useSupabaseClient<Database>();
+
+  async function updateDeckProfile() {
+    try {
+      setLoading(true);
+      if (!deck) throw new Error("No deck");
+
+      let { data, error } = await supabase
+        .from("decks")
+        .update({
+          deck_name: editableDeck.deck_name,
+          elo: editableDeck.elo,
+          tier: editableDeck.tier,
+        })
+        .eq("deck_id", deckId);
+      console.log("value of data", data);
+      if (error) throw error;
+      // Update the deck state with the new values
+      if (data) {
+        const updatedDeck: EditableDeck = {
+          deck_name: (data[0] as EditableDeck).deck_name,
+          elo: (data[0] as EditableDeck).elo,
+          tier: (data[0] as EditableDeck).tier,
+          time_added: (data[0] as EditableDeck).time_added,
+        };
+        console.log("updated deck : ", updatedDeck);
+        setEditableDeck(updatedDeck);
+      } else {
+        console.log("no data");
+      }
+      alert("Deck updated!");
+    } catch (error) {
+      alert("Error updating the data!");
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   const toggleEditable = () => {
     setIsEditable(!isEditable);
-    //console.log(editableDeck);
   };
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    setEditableDeck({ ...editableDeck, [name]: value });
+  const setUpdatedDeck = (name: string, value: string) => {
+    setEditableDeck((prevState) => ({ ...prevState, [name]: value }));
   };
 
-  const saveChanges = () => {
-    console.log("Saved changes:", editableDeck);
+  const saveChanges = async () => {
     setIsEditable(false);
+    await updateDeckProfile();
+    console.log("Saved changes:", editableDeck);
   };
 
   if (isEditable) {
@@ -50,7 +91,9 @@ export function DeckProfileCard({ deck }: DeckProfileCardProps) {
               value={
                 editableDeck.deck_name !== null ? editableDeck.deck_name : ""
               }
-              onChange={handleInputChange}
+              onChange={(e) => {
+                setUpdatedDeck(e.target.name, e.target.value);
+              }}
               className="mb-4"
             />
             <label className="block mb-2 text-gray-300" htmlFor="elo">
@@ -61,7 +104,9 @@ export function DeckProfileCard({ deck }: DeckProfileCardProps) {
               id="elo"
               name="elo"
               value={editableDeck.elo !== null ? editableDeck.elo : ""}
-              onChange={handleInputChange}
+              onChange={(e) => {
+                setUpdatedDeck(e.target.name, e.target.value);
+              }}
               className="mb-4"
             />
             <label className="block mb-2 text-gray-300" htmlFor="tier">
@@ -72,21 +117,10 @@ export function DeckProfileCard({ deck }: DeckProfileCardProps) {
               id="tier"
               name="tier"
               value={editableDeck.tier !== null ? editableDeck.tier : ""}
-              onChange={handleInputChange}
+              onChange={(e) => {
+                setUpdatedDeck(e.target.name, e.target.value);
+              }}
               className="mb-4"
-            />
-            <label className="block mb-2 text-gray-300" htmlFor="time_added">
-              Time Added:
-            </label>
-            <input
-              type="text"
-              id="time_added"
-              name="time_added"
-              value={
-                editableDeck.time_added !== null ? editableDeck.time_added : ""
-              }
-              onChange={handleInputChange}
-              className="mb-4 w-full"
             />
           </div>
         </div>
@@ -128,10 +162,10 @@ export default function GetDeckProfile({ session }: { session: Session }) {
   const [deck, setDeck] = useState<Deck | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const memoizedDeckId = useMemo(
-    () => router.query.deckId,
-    [router.query.deckId]
-  );
+  const memoizedDeckId = useMemo(() => {
+    const deckId = router.query.deckId;
+    return Array.isArray(deckId) ? deckId[0] : deckId;
+  }, [router.query.deckId]);
 
   const isMountedRef = useRef(false);
   const rendersRef = useRef(0);
@@ -169,7 +203,9 @@ export default function GetDeckProfile({ session }: { session: Session }) {
 
   return (
     <div className="w-full">
-      {isLoading ? LoadingSpinner() : deck && <DeckProfileCard deck={deck} />}
+      {isLoading
+        ? LoadingSpinner()
+        : deck && <DeckProfileCard deck={deck} deckId={memoizedDeckId} />}
     </div>
   );
 }
