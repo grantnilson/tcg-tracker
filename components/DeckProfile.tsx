@@ -18,12 +18,15 @@ interface EditableDeck {
 }
 
 export function DeckProfileCard({ deck, deckId }: DeckProfileCardProps) {
-  //console.log("value of initial deck",)
   const [isEditable, setIsEditable] = useState(false);
   const [editableDeck, setEditableDeck] = useState(deck);
 
   const [loading, setLoading] = useState(false);
   const supabase = useSupabaseClient<Database>();
+
+  useEffect(() => {
+    //console.log("value of editableDeck is : " + JSON.stringify(editableDeck));
+  }, [editableDeck]);
 
   async function updateDeckProfile() {
     try {
@@ -37,10 +40,10 @@ export function DeckProfileCard({ deck, deckId }: DeckProfileCardProps) {
           elo: editableDeck.elo,
           tier: editableDeck.tier,
         })
-        .eq("deck_id", deckId);
-      console.log("value of data", data);
+        .eq("deck_id", deckId)
+        .select("deck_name, tier, elo");
+
       if (error) throw error;
-      // Update the deck state with the new values
       if (data) {
         const updatedDeck: EditableDeck = {
           deck_name: (data[0] as EditableDeck).deck_name,
@@ -48,7 +51,7 @@ export function DeckProfileCard({ deck, deckId }: DeckProfileCardProps) {
           tier: (data[0] as EditableDeck).tier,
           time_added: (data[0] as EditableDeck).time_added,
         };
-        console.log("updated deck : ", updatedDeck);
+
         setEditableDeck(updatedDeck);
       } else {
         console.log("no data");
@@ -73,7 +76,6 @@ export function DeckProfileCard({ deck, deckId }: DeckProfileCardProps) {
   const saveChanges = async () => {
     setIsEditable(false);
     await updateDeckProfile();
-    console.log("Saved changes:", editableDeck);
   };
 
   if (isEditable) {
@@ -137,9 +139,9 @@ export function DeckProfileCard({ deck, deckId }: DeckProfileCardProps) {
       <div className="flex items-center px-4 py-4 sm:px-6">
         <div className="min-w-0 flex-1 flex items-center">
           <div className="text-sm leading-5 font-medium truncate">
-            <h1>{deck.deck_name}</h1>
-            <p>ELO: {deck.elo}</p>
-            <p>Tier: {deck.tier}</p>
+            <h1>{editableDeck.deck_name}</h1>
+            <p>ELO: {editableDeck.elo}</p>
+            <p>Tier: {editableDeck.tier}</p>
             <p>Added: {deck.time_added}</p>
           </div>
         </div>
