@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useSupabaseClient, Session } from "@supabase/auth-helpers-react";
 import { Database } from "../utils/database.types";
 import { useRouter } from "next/router";
+import DeckAvatar from "./DeckAvatar";
 
 type Deck = Database["public"]["Tables"]["decks"]["Row"];
 
@@ -135,18 +136,20 @@ export function DeckProfileCard({ deck, deckId }: DeckProfileCardProps) {
   }
 
   return (
-    <div className="w-full block cursor-pointerfocus:outline-none focus:bg-gray-200 transition duration-150 ease-in-out">
-      <div className="flex items-center px-4 py-4 sm:px-6">
-        <div className="min-w-0 flex-1 flex items-center">
-          <div className="text-sm leading-5 font-medium truncate">
-            <h1>{editableDeck.deck_name}</h1>
-            <p>ELO: {editableDeck.elo}</p>
-            <p>Tier: {editableDeck.tier}</p>
-            <p>Added: {deck.time_added}</p>
+    <div>
+      <div className="w-full block cursor-pointerfocus:outline-none focus:bg-gray-200 transition duration-150 ease-in-out">
+        <div className="flex items-center px-4 py-4 sm:px-6">
+          <div className="min-w-0 flex-1 flex items-center">
+            <div className="text-sm leading-5 font-medium truncate">
+              <h1>{editableDeck.deck_name}</h1>
+              <p>ELO: {editableDeck.elo}</p>
+              <p>Tier: {editableDeck.tier}</p>
+              <p>Added: {deck.time_added}</p>
+            </div>
           </div>
-        </div>
-        <div>
-          <button onClick={toggleEditable}>Edit</button>
+          <div>
+            <button onClick={toggleEditable}>Edit</button>
+          </div>
         </div>
       </div>
     </div>
