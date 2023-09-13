@@ -20,9 +20,6 @@ export default function Avatar({
   const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
-    console.log("here 1");
-    console.log("url:", url);
-    console.log("supabase.storage:", supabase.storage);
     async function downloadImage(path: string) {
       try {
         const { data, error } = await supabase.storage
