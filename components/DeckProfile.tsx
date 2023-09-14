@@ -24,9 +24,7 @@ export function DeckProfileCard({ deck, deckId }: DeckProfileCardProps) {
   const [loading, setLoading] = useState(false);
   const supabase = useSupabaseClient<Database>();
 
-  useEffect(() => {
-    //console.log("value of editableDeck is : " + JSON.stringify(editableDeck));
-  }, [editableDeck]);
+  useEffect(() => {}, [editableDeck]);
 
   async function updateDeckProfile() {
     try {
