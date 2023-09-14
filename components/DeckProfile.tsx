@@ -32,6 +32,7 @@ export function DeckProfileCard({ deck, deckId }: DeckProfileCardProps) {
     try {
       setLoading(true);
       if (!deck) throw new Error("No deck");
+      if (!deckId) throw new Error("No deckID");
 
       let { data, error } = await supabase
         .from("decks")
