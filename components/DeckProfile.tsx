@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useSupabaseClient, Session } from "@supabase/auth-helpers-react";
 import { Database } from "../utils/database.types";
 import { useRouter } from "next/router";
+import DeckAvatar from "./DeckAvatar";
 
 type Deck = Database["public"]["Tables"]["decks"]["Row"];
 
@@ -162,6 +163,8 @@ export default function GetDeckProfile({ session }: { session: Session }) {
 
   const [deck, setDeck] = useState<Deck | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [deck_avatar_url, setDeckAvatarUrl] =
+    useState<Deck["deck_image_url"]>(null);
 
   const memoizedDeckId = useMemo(() => {
     const deckId = router.query.deckId;
@@ -188,6 +191,7 @@ export default function GetDeckProfile({ session }: { session: Session }) {
         } else {
           if (isMountedRef.current) {
             setDeck(deck[0] || null);
+            setDeckAvatarUrl(deck[0].deck_image_url);
             setIsLoading(false);
           }
         }
@@ -203,10 +207,25 @@ export default function GetDeckProfile({ session }: { session: Session }) {
   }, [supabase, memoizedDeckId]);
 
   return (
-    <div className="w-full">
-      {isLoading
-        ? LoadingSpinner()
-        : deck && <DeckProfileCard deck={deck} deckId={memoizedDeckId} />}
+    <div>
+      {deck && (
+        <div>
+          <DeckAvatar
+            uid={deck.deck_id}
+            url={deck.deck_image_url}
+            size={150}
+            onUpload={(url) => {
+              setDeckAvatarUrl(url);
+              //updateProfile({ username, avatar_url: url });
+            }}
+          />
+        </div>
+      )}
+      <div className="w-full">
+        {isLoading
+          ? LoadingSpinner()
+          : deck && <DeckProfileCard deck={deck} deckId={memoizedDeckId} />}
+      </div>
     </div>
   );
 }
