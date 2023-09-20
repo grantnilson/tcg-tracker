@@ -163,6 +163,7 @@ export default function GetDeckProfile({ session }: { session: Session }) {
 
   const [deck, setDeck] = useState<Deck | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isDeckImageLoading, setIsDeckImageLoading] = useState(true);
   const [deck_avatar_url, setDeckAvatarUrl] =
     useState<Deck["deck_image_url"]>(null);
 
@@ -173,6 +174,36 @@ export default function GetDeckProfile({ session }: { session: Session }) {
 
   const isMountedRef = useRef(false);
   const rendersRef = useRef(0);
+
+  async function updateDeckAvatar({
+    deck_id,
+    deck_image_url,
+  }: {
+    deck_id: Deck["deck_id"];
+    deck_image_url: Deck["deck_image_url"];
+  }) {
+    try {
+      setIsDeckImageLoading(true);
+      if (!deck_id) throw new Error("No deck_id");
+      console.log(deck_id);
+      console.log(deck_image_url);
+
+      let { data, error } = await supabase
+        .from("decks")
+        .update({
+          deck_image_url: deck_image_url,
+        })
+        .eq("deck_id", deck_id);
+
+      if (error) throw error;
+      alert("Deck updated!");
+    } catch (error) {
+      alert("Error updating the data!");
+      console.log(error);
+    } finally {
+      setIsDeckImageLoading(false);
+    }
+  }
 
   useEffect(() => {
     const renders = rendersRef.current;
@@ -216,7 +247,7 @@ export default function GetDeckProfile({ session }: { session: Session }) {
             size={150}
             onUpload={(url) => {
               setDeckAvatarUrl(url);
-              //updateProfile({ username, avatar_url: url });
+              updateDeckAvatar({ deck_id: deck.deck_id, deck_image_url: url });
             }}
           />
         </div>
