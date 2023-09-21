@@ -57,12 +57,15 @@ export default function Avatar({
       const fileExt = file.name.split(".").pop();
       const fileName = `${uid}.${fileExt}`;
       const filePath = `${fileName}`;
+      console.log("filepath : ", filePath);
+      console.log("file : ", file);
 
       let { error: uploadError } = await supabase.storage
         .from("avatars")
         .upload(filePath, file, { upsert: true });
 
       if (uploadError) {
+        console.log("uplaod error");
         throw uploadError;
       }
 
