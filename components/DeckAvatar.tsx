@@ -56,7 +56,9 @@ export default function DeckAvatar({
 
       const file = event.target.files[0];
       const fileExt = file.name.split(".").pop();
-      const fileName = `${uid}.${fileExt}`;
+      const timestamp = Date.now();
+
+      const fileName = `${uid}_${timestamp}.${fileExt}`;
       const filePath = `${fileName}`;
       console.log("filepath : ", filePath);
       console.log("file : ", file);
