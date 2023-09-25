@@ -6,6 +6,8 @@
 .pnp.js
 /.history 
 .history
+/.package.json
+.package.json
 
 # testing
 /coverage
