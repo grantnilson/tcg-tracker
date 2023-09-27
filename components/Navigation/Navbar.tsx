@@ -1,7 +1,10 @@
-import { Home, Settings } from "@mui/icons-material";
+import Home from "@mui/icons-material/Home";
+import Settings from "@mui/icons-material/Settings";
+import TextField from "@mui/material/TextField";
 import { AppBar } from "@mui/material";
 
 import * as React from "react";
+import { useState, useEffect } from "react";
 
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -17,11 +20,32 @@ import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Link from "next/link";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { Database } from "@/utils/database.types";
+type Profiles = Database["public"]["Tables"]["profiles"]["Row"];
 
 const pages = ["Decks"];
 const userSettings = ["Accounts"];
 
 export default function Navbar() {
+  const supabase = useSupabaseClient<Database>();
+
+  const [user, setUser] = useState<any>(null);
+  const [userAvatar, setUserAvatar] = useState<any>(null);
+
+  useEffect(() => {
+    async function fetchUser() {
+      const { data } = await supabase.auth.getUser();
+      if (data && data.user) {
+        console.log("user :", data.user);
+        setUser(data.user);
+      } else {
+        setUser(null);
+      }
+    }
+
+    fetchUser();
+  }, [supabase]);
   const [anchorNav, setAnchorNav] = React.useState<null | HTMLElement>(null);
   const [anchorUserMenu, setAnchorUserMenu] =
     React.useState<null | HTMLElement>(null);
