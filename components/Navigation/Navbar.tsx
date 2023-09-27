@@ -1,4 +1,4 @@
-import { Home } from "@mui/icons-material";
+import { Home, Settings } from "@mui/icons-material";
 import { AppBar } from "@mui/material";
 
 import * as React from "react";
@@ -18,7 +18,8 @@ import AdbIcon from "@mui/icons-material/Adb";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Link from "next/link";
 
-const pages = ["Accounts", "Decks"];
+const pages = ["Decks"];
+const userSettings = ["Accounts"];
 
 export default function Navbar() {
   const [anchorNav, setAnchorNav] = React.useState<null | HTMLElement>(null);
@@ -93,7 +94,6 @@ export default function Navbar() {
               </IconButton>
               <Menu
                 id="menu-appbar"
-                color="primary"
                 anchorEl={anchorNav}
                 anchorOrigin={{
                   vertical: "bottom",
@@ -112,7 +112,6 @@ export default function Navbar() {
               >
                 {pages.map((page) => (
                   <MenuItem
-                    color="primary"
                     key={page}
                     //onClick={() => router.push(`/${page}`)}
                   >
@@ -154,6 +153,39 @@ export default function Navbar() {
                   {page}
                 </Button>
               ))}
+            </Box>
+            <Box sx={{ flexGrow: 0 }}>
+              <Tooltip title="Open settings">
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                  <Settings />
+                </IconButton>
+              </Tooltip>
+              <Menu
+                sx={{ mt: "45px" }}
+                id="menu-appbar"
+                anchorEl={anchorUserMenu}
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                open={Boolean(anchorUserMenu)}
+                onClose={handleCloseUserMenu}
+              >
+                {userSettings.map((setting) => (
+                  <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                    <Link href={`/${setting}`} passHref>
+                      <Typography color="primary" textAlign="center">
+                        {setting}
+                      </Typography>
+                    </Link>
+                  </MenuItem>
+                ))}
+              </Menu>
             </Box>
           </Toolbar>
         </Container>
