@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { Database } from "../utils/database.types";
 import Image from "next/image";
+
+import AvatarImage from "./AvatarImage";
 type Profiles = Database["public"]["Tables"]["profiles"]["Row"];
 
 export default function Avatar({
@@ -18,30 +20,6 @@ export default function Avatar({
   const supabase = useSupabaseClient<Database>();
   const [avatarUrl, setAvatarUrl] = useState<Profiles["avatar_url"]>(null);
   const [uploading, setUploading] = useState(false);
-
-  useEffect(() => {
-    async function downloadImage(path: string) {
-      try {
-        const { data, error } = await supabase.storage
-          .from("avatars")
-          .download(path);
-        if (error) {
-          console.log("download path error", error);
-          throw error;
-        }
-        const url = URL.createObjectURL(data);
-
-        // Check if the new URL is different from the current state value
-        if (url !== avatarUrl) {
-          setAvatarUrl(url);
-        }
-      } catch (error) {
-        console.log("Error downloading image: ", error);
-      }
-    }
-
-    if (url) downloadImage(url);
-  }, [url, supabase]);
 
   const uploadAvatar: React.ChangeEventHandler<HTMLInputElement> = async (
     event
@@ -80,14 +58,8 @@ export default function Avatar({
 
   return (
     <div>
-      {avatarUrl ? (
-        <Image
-          src={avatarUrl}
-          alt="Avatar"
-          className="avatar image"
-          width={size}
-          height={size}
-        />
+      {url ? (
+        <AvatarImage avatarUrl={url} size={size} />
       ) : (
         <div
           className="avatar no-image"
