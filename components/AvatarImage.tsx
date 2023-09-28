@@ -33,9 +33,9 @@ export default function AvatarImage({ avatarUrl, size }: AvatarImageProps) {
         console.log("Error downloading image: ", error);
       }
     }
-
+    console.log("avatar image useEffect");
     if (avatarUrl) downloadImage(avatarUrl);
-  }, [avatarUrl, imageUrl, supabase]);
+  }, [avatarUrl, supabase]);
 
   return imageUrl ? (
     <Image

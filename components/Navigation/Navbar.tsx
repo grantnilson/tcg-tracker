@@ -76,7 +76,7 @@ export default function Navbar() {
         setLoading(false);
       }
     }
-
+    console.log("navbar useEffect");
     fetchData();
   }, [supabase]);
 
