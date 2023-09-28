@@ -6,6 +6,7 @@ type Props = {};
 
 export default function DeckProfile() {
   const session = useSession();
+  console.log("deck profile index.tsx session : ", session);
 
   return (
     <div className="container" style={{ padding: "50px 0 100px 0" }}>

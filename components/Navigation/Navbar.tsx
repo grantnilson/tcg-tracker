@@ -42,6 +42,8 @@ export default function Navbar() {
 
         // Fetch user
         const { data: userData } = await supabase.auth.getUser();
+        const { data: sessionData, error } = await supabase.auth.getSession();
+        console.log("session data", sessionData);
         if (userData && userData.user) {
           setUser(userData.user);
         } else {
@@ -76,7 +78,7 @@ export default function Navbar() {
         setLoading(false);
       }
     }
-
+    console.log("navbar useEffect");
     fetchData();
   }, [supabase]);
 
@@ -113,134 +115,144 @@ export default function Navbar() {
   });
 
   return (
-    <ThemeProvider theme={theme}>
-      <AppBar position="static" color="primary" enableColorOnDark>
-        <Container maxWidth="xl">
-          <Toolbar disableGutters>
-            <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
-              <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
-              <Typography
-                variant="h6"
-                noWrap
-                component="a"
-                href="#app-bar-with-responsive-menu"
-                sx={{
-                  mr: 2,
-                  display: { xs: "none", md: "flex" },
-                  fontFamily: "monospace",
-                  fontWeight: 700,
-                  letterSpacing: ".3rem",
-                  color: "inherit",
-                  textDecoration: "none",
-                }}
-              >
-                TCG-Tracker
-              </Typography>
-              <IconButton
-                size="large"
-                aria-label="account of current user"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
-                onClick={handleOpenNavMenu}
-                color="inherit"
-              >
-                <MenuIcon />
-              </IconButton>
-              <Menu
-                id="menu-appbar"
-                anchorEl={anchorNav}
-                anchorOrigin={{
-                  vertical: "bottom",
-                  horizontal: "left",
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "left",
-                }}
-                open={Boolean(anchorNav)}
-                onClose={handleCloseNavMenu}
-                sx={{
-                  display: { xs: "block", md: "none" },
-                }}
-              >
-                {pages.map((page) => (
-                  <MenuItem key={page}>
-                    <Link href={`/${page}`} passHref>
-                      <Typography color="primary" textAlign="center">
-                        {page}
-                      </Typography>
-                    </Link>
-                  </MenuItem>
-                ))}
-              </Menu>
-            </Box>
-            <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
-            <Typography
-              variant="h5"
-              noWrap
-              component="a"
-              href="#app-bar-with-responsive-menu"
-              sx={{
-                mr: 2,
-                display: { xs: "flex", md: "none" },
-                flexGrow: 1,
-                fontFamily: "monospace",
-                fontWeight: 700,
-                letterSpacing: ".3rem",
-                color: "inherit",
-                textDecoration: "none",
-              }}
-            >
-              TCG-Tracker
-            </Typography>
-            <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-              {pages.map((page) => (
-                <Button
-                  key={page}
-                  onClick={handleCloseNavMenu}
-                  sx={{ my: 2, color: "white", display: "block" }}
+    <div>
+      {!loading && (
+        <ThemeProvider theme={theme}>
+          <AppBar position="static" color="primary" enableColorOnDark>
+            <Container maxWidth="xl">
+              <Toolbar disableGutters>
+                <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
+                  <AdbIcon
+                    sx={{ display: { xs: "none", md: "flex" }, mr: 1 }}
+                  />
+                  <Typography
+                    variant="h6"
+                    noWrap
+                    component="a"
+                    href="#app-bar-with-responsive-menu"
+                    sx={{
+                      mr: 2,
+                      display: { xs: "none", md: "flex" },
+                      fontFamily: "monospace",
+                      fontWeight: 700,
+                      letterSpacing: ".3rem",
+                      color: "inherit",
+                      textDecoration: "none",
+                    }}
+                  >
+                    TCG-Tracker
+                  </Typography>
+                  <IconButton
+                    size="large"
+                    aria-label="account of current user"
+                    aria-controls="menu-appbar"
+                    aria-haspopup="true"
+                    onClick={handleOpenNavMenu}
+                    color="inherit"
+                  >
+                    <MenuIcon />
+                  </IconButton>
+                  <Menu
+                    id="menu-appbar"
+                    anchorEl={anchorNav}
+                    anchorOrigin={{
+                      vertical: "bottom",
+                      horizontal: "left",
+                    }}
+                    keepMounted
+                    transformOrigin={{
+                      vertical: "top",
+                      horizontal: "left",
+                    }}
+                    open={Boolean(anchorNav)}
+                    onClose={handleCloseNavMenu}
+                    sx={{
+                      display: { xs: "block", md: "none" },
+                    }}
+                  >
+                    {pages.map((page) => (
+                      <MenuItem key={page}>
+                        <Link href={`/${page}`} passHref>
+                          <Typography color="primary" textAlign="center">
+                            {page}
+                          </Typography>
+                        </Link>
+                      </MenuItem>
+                    ))}
+                  </Menu>
+                </Box>
+                <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
+                <Typography
+                  variant="h5"
+                  noWrap
+                  component="a"
+                  href="#app-bar-with-responsive-menu"
+                  sx={{
+                    mr: 2,
+                    display: { xs: "flex", md: "none" },
+                    flexGrow: 1,
+                    fontFamily: "monospace",
+                    fontWeight: 700,
+                    letterSpacing: ".3rem",
+                    color: "inherit",
+                    textDecoration: "none",
+                  }}
                 >
-                  {page}
-                </Button>
-              ))}
-            </Box>
-            <Box sx={{ flexGrow: 0 }}>
-              <Tooltip title="Open settings">
-                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <AvatarImage avatarUrl={userAvatar} size={40} />
-                </IconButton>
-              </Tooltip>
-              <Menu
-                sx={{ mt: "45px" }}
-                id="menu-appbar"
-                anchorEl={anchorUserMenu}
-                anchorOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                open={Boolean(anchorUserMenu)}
-                onClose={handleCloseUserMenu}
-              >
-                {userSettings.map((setting) => (
-                  <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                    <Link href={`/${setting}`} passHref>
-                      <Typography color="primary" textAlign="center">
-                        {setting}
-                      </Typography>
-                    </Link>
-                  </MenuItem>
-                ))}
-              </Menu>
-            </Box>
-          </Toolbar>
-        </Container>
-      </AppBar>
-    </ThemeProvider>
+                  TCG-Tracker
+                </Typography>
+                <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
+                  {pages.map((page) => (
+                    <Button
+                      key={page}
+                      onClick={handleCloseNavMenu}
+                      sx={{ my: 2, color: "white", display: "block" }}
+                    >
+                      {page}
+                    </Button>
+                  ))}
+                </Box>
+                <Box sx={{ flexGrow: 0 }}>
+                  <Tooltip title="Open settings">
+                    <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                      {userAvatar ? (
+                        <AvatarImage avatarUrl={userAvatar} size={40} />
+                      ) : (
+                        <Settings />
+                      )}
+                    </IconButton>
+                  </Tooltip>
+                  <Menu
+                    sx={{ mt: "45px" }}
+                    id="menu-appbar"
+                    anchorEl={anchorUserMenu}
+                    anchorOrigin={{
+                      vertical: "top",
+                      horizontal: "right",
+                    }}
+                    keepMounted
+                    transformOrigin={{
+                      vertical: "top",
+                      horizontal: "right",
+                    }}
+                    open={Boolean(anchorUserMenu)}
+                    onClose={handleCloseUserMenu}
+                  >
+                    {userSettings.map((setting) => (
+                      <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                        <Link href={`/${setting}`} passHref>
+                          <Typography color="primary" textAlign="center">
+                            {setting}
+                          </Typography>
+                        </Link>
+                      </MenuItem>
+                    ))}
+                  </Menu>
+                </Box>
+              </Toolbar>
+            </Container>
+          </AppBar>
+        </ThemeProvider>
+      )}
+    </div>
   );
 }

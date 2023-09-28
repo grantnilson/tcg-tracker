@@ -6,6 +6,7 @@ import Account from "../components/Account";
 
 const Home = () => {
   const session = useSession();
+  console.log("home page session : ", session);
   const supabase = useSupabaseClient();
 
   return (
