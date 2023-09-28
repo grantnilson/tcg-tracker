@@ -1,6 +1,4 @@
-import Home from "@mui/icons-material/Home";
 import Settings from "@mui/icons-material/Settings";
-import TextField from "@mui/material/TextField";
 import { AppBar } from "@mui/material";
 
 import * as React from "react";
@@ -13,15 +11,18 @@ import Typography from "@mui/material/Typography";
 import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
 import Container from "@mui/material/Container";
-import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
+
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Link from "next/link";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { Database } from "@/utils/database.types";
+
+import AvatarImage from "../AvatarImage";
+
 type Profiles = Database["public"]["Tables"]["profiles"]["Row"];
 
 const pages = ["Decks"];
@@ -31,21 +32,54 @@ export default function Navbar() {
   const supabase = useSupabaseClient<Database>();
 
   const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
   const [userAvatar, setUserAvatar] = useState<any>(null);
 
   useEffect(() => {
-    async function fetchUser() {
-      const { data } = await supabase.auth.getUser();
-      if (data && data.user) {
-        console.log("user :", data.user);
-        setUser(data.user);
-      } else {
-        setUser(null);
+    async function fetchData() {
+      try {
+        setLoading(true);
+
+        // Fetch user
+        const { data: userData } = await supabase.auth.getUser();
+        if (userData && userData.user) {
+          setUser(userData.user);
+        } else {
+          setUser(null);
+        }
+
+        // Fetch user avatar
+        if (userData && userData.user) {
+          const {
+            data: avatarData,
+            error,
+            status,
+          } = await supabase
+            .from("profiles")
+            .select(`avatar_url`)
+            .eq("id", userData.user.id)
+            .single();
+
+          if (error && status !== 406) {
+            throw error;
+          }
+
+          if (avatarData) {
+            setUserAvatar(avatarData.avatar_url);
+            //console.log("avatar url : ", avatarData.avatar_url);
+          }
+        }
+      } catch (error) {
+        alert("Error loading user data!");
+        console.error(error);
+      } finally {
+        setLoading(false);
       }
     }
 
-    fetchUser();
+    fetchData();
   }, [supabase]);
+
   const [anchorNav, setAnchorNav] = React.useState<null | HTMLElement>(null);
   const [anchorUserMenu, setAnchorUserMenu] =
     React.useState<null | HTMLElement>(null);
@@ -69,14 +103,10 @@ export default function Navbar() {
     palette: {
       primary: {
         main: "#474747",
-        // light: will be calculated from palette.primary.main,
-        // dark: will be calculated from palette.primary.main,
-        // contrastText: will be calculated to contrast with palette.primary.main
       },
       secondary: {
         main: "#474747",
         light: "#F5EBFF",
-        // dark: will be calculated from palette.secondary.main,
         contrastText: "#fff",
       },
     },
@@ -135,10 +165,7 @@ export default function Navbar() {
                 }}
               >
                 {pages.map((page) => (
-                  <MenuItem
-                    key={page}
-                    //onClick={() => router.push(`/${page}`)}
-                  >
+                  <MenuItem key={page}>
                     <Link href={`/${page}`} passHref>
                       <Typography color="primary" textAlign="center">
                         {page}
@@ -181,7 +208,7 @@ export default function Navbar() {
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Settings />
+                  <AvatarImage avatarUrl={userAvatar} size={40} />
                 </IconButton>
               </Tooltip>
               <Menu
