@@ -7,7 +7,7 @@ import {
   useSupabaseClient,
 } from "@supabase/auth-helpers-react";
 import Link from "next/link";
-import Account from "../components/Account";
+import Account from "../components/Account/AccountForm";
 import AuthForm from "@/components/Auth/AuthForm";
 
 const Home = () => {
@@ -18,28 +18,14 @@ const Home = () => {
 
   return (
     <div className="container" style={{ padding: "50px 0 100px 0" }}>
-      {!session ? (
-        <div className="row">
-          <div className="col-6">
-            <h1 className="header">TCG-Tracker Application</h1>
-          </div>
-          <div className="col-6 auth-widget">
-            <AuthForm />
-          </div>
+      <div className="row">
+        <div className="col-6">
+          <h1 className="header">TCG-Tracker Application</h1>
         </div>
-      ) : (
-        <nav>
-          <ul>
-            <li>
-              {" "}
-              <Link href="/Accounts">Accounts</Link>
-            </li>
-            <li>
-              <Link href="/Decks">Decks</Link>
-            </li>
-          </ul>
-        </nav>
-      )}
+        <div className="col-6 auth-widget">
+          <AuthForm />
+        </div>
+      </div>
     </div>
   );
 };
