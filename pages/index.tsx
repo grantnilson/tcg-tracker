@@ -8,6 +8,7 @@ import {
 } from "@supabase/auth-helpers-react";
 import Link from "next/link";
 import Account from "../components/Account";
+import AuthForm from "@/components/Auth/AuthForm";
 
 const Home = () => {
   const session = useSession();
@@ -23,13 +24,7 @@ const Home = () => {
             <h1 className="header">TCG-Tracker Application</h1>
           </div>
           <div className="col-6 auth-widget">
-            <SessionContextProvider supabaseClient={supabase}>
-              <Auth
-                supabaseClient={supabase}
-                appearance={{ theme: ThemeSupa }}
-                theme="dark"
-              />
-            </SessionContextProvider>
+            <AuthForm />
           </div>
         </div>
       ) : (
