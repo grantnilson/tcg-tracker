@@ -1,6 +1,6 @@
 import React from "react";
 import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
-import DeckList from "../../components/DeckList";
+import DeckList from "../../components/Deck/DeckList";
 
 export default function Decks() {
   const session = useSession();

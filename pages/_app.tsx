@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { createPagesBrowserClient } from "@supabase/auth-helpers-nextjs";
 import { createClient } from "@supabase/supabase-js";
 import { SessionContextProvider, Session } from "@supabase/auth-helpers-react";
 import Layout from "@/components/Navigation/Layout";
@@ -12,7 +12,7 @@ function MyApp({
 }: AppProps<{
   initialSession: Session;
 }>) {
-  const [supabase] = useState(() => createBrowserSupabaseClient());
+  const [supabase] = useState(() => createPagesBrowserClient());
 
   return (
     <SessionContextProvider

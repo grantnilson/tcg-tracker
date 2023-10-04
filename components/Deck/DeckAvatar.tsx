@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { Database } from "../utils/database.types";
+import { Database } from "../../utils/database.types";
 import Image from "next/image";
 type Decks = Database["public"]["Tables"]["decks"]["Row"];
 

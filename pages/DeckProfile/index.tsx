@@ -1,10 +1,10 @@
 import { useSession } from "@supabase/auth-helpers-react";
-import GetDeckProfile from "@/components/DeckProfile";
+import GetDeckProfile from "@/components/Deck/DeckProfile";
 import React from "react";
 
 export default function DeckProfile() {
   const session = useSession();
-  //console.log("deck profile index.tsx session : ", session);
+  console.log("deck profile index.tsx session : ", session);
 
   return (
     <div className="container" style={{ padding: "50px 0 100px 0" }}>

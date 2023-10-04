@@ -20,9 +20,8 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Link from "next/link";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { Database } from "@/utils/database.types";
-//import { Session, User } from "@supabase/gotrue-js/src/lib/types";
 
-import AvatarImage from "../AvatarImage";
+import AvatarImage from "../Avatar/AvatarImage";
 
 type Profiles = Database["public"]["Tables"]["profiles"]["Row"];
 
@@ -41,14 +40,8 @@ export default function Navbar() {
     async function fetchData() {
       try {
         setLoading(true);
-
-        // Fetch user
-        //const { data: userData } = await supabase.session.getUser();
         const { data: sessionData, error } = await supabase.auth.getSession();
-        //console.log("session data", sessionData);
-
         const user_id = sessionData.session?.user?.id;
-        console.log("session user id :", user_id);
 
         if (sessionData) {
           setSession(sessionData.session);
@@ -58,7 +51,6 @@ export default function Navbar() {
 
         // Fetch user avatars
         if (user_id) {
-          console.log("here");
           const {
             data: avatarData,
             error,
@@ -75,7 +67,6 @@ export default function Navbar() {
 
           if (avatarData) {
             setUserAvatar(avatarData.avatar_url);
-            //console.log("avatar url : ", avatarData.avatar_url);
           }
         }
       } catch (error) {

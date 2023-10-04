@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useSupabaseClient, Session } from "@supabase/auth-helpers-react";
-import { Database } from "../utils/database.types";
+import { Database } from "@/utils/database.types";
 import { useRouter } from "next/router";
 import DeckAvatar from "./DeckAvatar";
 
@@ -157,7 +157,11 @@ function LoadingSpinner() {
   return <p>Loading...</p>;
 }
 
-export default function GetDeckProfile({ session }: { session: Session }) {
+export default function GetDeckProfile({
+  session,
+}: {
+  session: Session | null;
+}) {
   const router = useRouter();
   const supabase = useSupabaseClient<Database>();
 

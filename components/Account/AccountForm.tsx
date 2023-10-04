@@ -5,7 +5,7 @@ import {
 } from "@supabase/auth-helpers-nextjs";
 
 import { Database } from "../../utils/database.types";
-import Avatar from "../Avatar";
+import Avatar from "../Avatar/Avatar";
 
 type Profiles = Database["public"]["Tables"]["profiles"]["Row"];
 
