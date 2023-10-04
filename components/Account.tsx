@@ -1,17 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
-  useUser,
-  useSupabaseClient,
   Session,
-} from "@supabase/auth-helpers-react";
+  createClientComponentClient,
+} from "@supabase/auth-helpers-nextjs";
+
 import { Database } from "../utils/database.types";
 import Avatar from "./Avatar";
 
 type Profiles = Database["public"]["Tables"]["profiles"]["Row"];
 
-export default function Account({ session }: { session: Session }) {
-  const supabase = useSupabaseClient<Database>();
-  const user = useUser();
+export default function AccountForm({ session }: { session: Session | null }) {
+  const supabase = createClientComponentClient<Database>();
+  const user = session?.user;
   const [loading, setLoading] = useState(true);
   const [username, setUsername] = useState<Profiles["username"]>(null);
   //const [website, setWebsite] = useState<Profiles["website"]>(null);
@@ -95,7 +95,7 @@ export default function Account({ session }: { session: Session }) {
       </div>
       <div>
         <label htmlFor="email">Email</label>
-        <input id="email" type="text" value={session.user.email} disabled />
+        <input id="email" type="text" value={session?.user.email} disabled />
       </div>
       <div>
         <label htmlFor="username">Username</label>
