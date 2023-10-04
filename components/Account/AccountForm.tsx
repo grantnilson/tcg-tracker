@@ -4,57 +4,56 @@ import {
   createClientComponentClient,
 } from "@supabase/auth-helpers-nextjs";
 
-import { Database } from "../utils/database.types";
-import Avatar from "./Avatar";
+import { Database } from "../../utils/database.types";
+import Avatar from "../Avatar/Avatar";
 
 type Profiles = Database["public"]["Tables"]["profiles"]["Row"];
 
 export default function AccountForm({ session }: { session: Session | null }) {
   const supabase = createClientComponentClient<Database>();
   const user = session?.user;
+
   const [loading, setLoading] = useState(true);
+
   const [username, setUsername] = useState<Profiles["username"]>(null);
-  //const [website, setWebsite] = useState<Profiles["website"]>(null);
   const [avatar_url, setAvatarUrl] = useState<Profiles["avatar_url"]>(null);
 
-  useEffect(() => {
-    async function getProfile() {
-      try {
-        setLoading(true);
-        if (!user) throw new Error("No user");
+  const getProfile = useCallback(async () => {
+    try {
+      setLoading(true);
 
-        let { data, error, status } = await supabase
-          .from("profiles")
-          .select(`username, avatar_url`)
-          .eq("id", user.id)
-          .single();
+      if (!user) throw new Error("No user");
 
-        if (error && status !== 406) {
-          throw error;
-        }
+      let { data, error, status } = await supabase
+        .from("profiles")
+        .select(`username, avatar_url`)
+        .eq("id", user.id)
+        .single();
 
-        if (data) {
-          setUsername(data.username);
-          //setWebsite(data.website);
-          setAvatarUrl(data.avatar_url);
-        }
-      } catch (error) {
-        alert("Error loading user data!");
-        console.log(error);
-      } finally {
-        setLoading(false);
+      if (error && status !== 406) {
+        throw error;
       }
+
+      if (data) {
+        setUsername(data.username);
+        setAvatarUrl(data.avatar_url);
+      }
+    } catch (error) {
+      alert("Error loading user data!");
+    } finally {
+      setLoading(false);
     }
+  }, [user, supabase]);
+
+  useEffect(() => {
     getProfile();
-  }, [session, user, supabase]);
+  }, [user, getProfile]);
 
   async function updateProfile({
     username,
-    //website,
     avatar_url,
   }: {
     username: Profiles["username"];
-    //website: Profiles["website"];
     avatar_url: Profiles["avatar_url"];
   }) {
     try {
@@ -64,7 +63,6 @@ export default function AccountForm({ session }: { session: Session | null }) {
       const updates = {
         id: user.id,
         username,
-        //website,
         avatar_url,
         updated_at: new Date().toISOString(),
       };
@@ -83,15 +81,17 @@ export default function AccountForm({ session }: { session: Session | null }) {
   return (
     <div className="form-widget">
       <div>
-        <Avatar
-          uid={user!.id}
-          url={avatar_url}
-          size={150}
-          onUpload={(url) => {
-            setAvatarUrl(url);
-            updateProfile({ username, avatar_url: url });
-          }}
-        />
+        {user && (
+          <Avatar
+            uid={user.id}
+            url={avatar_url}
+            size={150}
+            onUpload={(url) => {
+              setAvatarUrl(url);
+              updateProfile({ username, avatar_url: url });
+            }}
+          />
+        )}
       </div>
       <div>
         <label htmlFor="email">Email</label>

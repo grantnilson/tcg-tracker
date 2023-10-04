@@ -4,8 +4,7 @@ import {
   useSupabaseClient,
   Session,
 } from "@supabase/auth-helpers-react";
-import { Database } from "../utils/database.types";
-import Decks from "@/pages/Decks";
+import { Database } from "@/utils/database.types";
 import { useRouter } from "next/router";
 
 type Decks = Database["public"]["Tables"]["decks"]["Row"];
@@ -16,6 +15,9 @@ export default function DeckList({ session }: { session: Session }) {
   const [deckName, setDeckName] = useState("");
   //const [deckID, setDeckID] = useState("");
   const [errorText, setErrorText] = useState("");
+  if (session == null) {
+    console.log(" decklist session is null ");
+  }
 
   const user = session.user;
 
