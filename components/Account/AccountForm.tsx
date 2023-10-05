@@ -3,31 +3,34 @@ import {
   Session,
   createClientComponentClient,
 } from "@supabase/auth-helpers-nextjs";
+import { useUser } from "@supabase/auth-helpers-react";
 
 import { Database } from "../../utils/database.types";
 import Avatar from "../Avatar/Avatar";
 
 type Profiles = Database["public"]["Tables"]["profiles"]["Row"];
 
-export default function AccountForm({ session }: { session: Session | null }) {
+export default function AccountForm() {
   const supabase = createClientComponentClient<Database>();
-  const user = session?.user;
+  const user = useUser();
 
   const [loading, setLoading] = useState(true);
+  const [pageLoading, setPageLoading] = useState(false);
 
-  const [username, setUsername] = useState<Profiles["username"]>(null);
-  const [avatar_url, setAvatarUrl] = useState<Profiles["avatar_url"]>(null);
+  const [username, setUsername] = useState<Profiles["username"]>("");
+  const [avatar_url, setAvatarUrl] = useState<Profiles["avatar_url"]>("");
 
   const getProfile = useCallback(async () => {
     try {
       setLoading(true);
 
       if (!user) throw new Error("No user");
+      console.log(" Account form user :", user);
 
       let { data, error, status } = await supabase
         .from("profiles")
         .select(`username, avatar_url`)
-        .eq("id", user.id)
+        .eq("id", user?.id)
         .single();
 
       if (error && status !== 406) {
@@ -38,15 +41,18 @@ export default function AccountForm({ session }: { session: Session | null }) {
         setUsername(data.username);
         setAvatarUrl(data.avatar_url);
       }
+      setPageLoading(true);
     } catch (error) {
-      alert("Error loading user data!");
+      alert("Error loading user data in AccountForm!");
     } finally {
       setLoading(false);
     }
   }, [user, supabase]);
 
   useEffect(() => {
-    getProfile();
+    if (user) {
+      getProfile(); // Call getProfile only if there is a user
+    }
   }, [user, getProfile]);
 
   async function updateProfile({
@@ -78,6 +84,11 @@ export default function AccountForm({ session }: { session: Session | null }) {
     }
   }
 
+  if (!pageLoading) {
+    // Render a loading state until the profile data is loaded
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="form-widget">
       <div>
@@ -95,7 +106,7 @@ export default function AccountForm({ session }: { session: Session | null }) {
       </div>
       <div>
         <label htmlFor="email">Email</label>
-        <input id="email" type="text" value={session?.user.email} disabled />
+        <input id="email" type="text" value={user?.email} disabled />
       </div>
       <div>
         <label htmlFor="username">Username</label>

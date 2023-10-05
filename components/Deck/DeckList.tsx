@@ -9,17 +9,14 @@ import { useRouter } from "next/router";
 
 type Decks = Database["public"]["Tables"]["decks"]["Row"];
 
-export default function DeckList({ session }: { session: Session }) {
+export default function DeckList() {
   const supabase = useSupabaseClient<Database>();
   const [decks, setDecks] = useState<Decks[]>([]);
   const [deckName, setDeckName] = useState("");
   //const [deckID, setDeckID] = useState("");
   const [errorText, setErrorText] = useState("");
-  if (session == null) {
-    console.log(" decklist session is null ");
-  }
 
-  const user = session.user;
+  const user = useUser();
 
   useEffect(() => {
     const fetchDecks = async () => {
@@ -33,7 +30,7 @@ export default function DeckList({ session }: { session: Session }) {
     };
 
     fetchDecks();
-  }, [supabase, decks]);
+  }, [supabase]);
 
   const addDeck = async (deckName: string) => {
     let deckItem = deckName.trim();

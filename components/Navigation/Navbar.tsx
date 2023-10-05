@@ -18,7 +18,7 @@ import AdbIcon from "@mui/icons-material/Adb";
 
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Link from "next/link";
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
 import { Database } from "@/utils/database.types";
 
 import AvatarImage from "../Avatar/AvatarImage";
@@ -30,9 +30,7 @@ const userSettings = ["Accounts"];
 
 export default function Navbar() {
   const supabase = useSupabaseClient<Database>();
-  const [session, setSession] = useState<any>();
-
-  const [user, setUser] = useState<any>();
+  const user = useUser();
   const [loading, setLoading] = useState(false);
   const [userAvatar, setUserAvatar] = useState<any>(null);
 
@@ -40,17 +38,8 @@ export default function Navbar() {
     async function fetchData() {
       try {
         setLoading(true);
-        const { data: sessionData, error } = await supabase.auth.getSession();
-        const user_id = sessionData.session?.user?.id;
-
-        if (sessionData) {
-          setSession(sessionData.session);
-        } else {
-          setSession(null);
-        }
-
-        // Fetch user avatars
-        if (user_id) {
+        //console.log("navbar user id : ", user?.id);
+        if (user && user != null) {
           const {
             data: avatarData,
             error,
@@ -58,10 +47,11 @@ export default function Navbar() {
           } = await supabase
             .from("profiles")
             .select(`avatar_url`)
-            .eq("id", user_id)
+            .eq("id", user.id)
             .single();
 
           if (error && status !== 406) {
+            console.log("406 error");
             throw error;
           }
 
@@ -76,9 +66,9 @@ export default function Navbar() {
         setLoading(false);
       }
     }
-    console.log("navbar useEffect");
+    //console.log("navbar useEffect");
     fetchData();
-  }, [supabase]);
+  }, [supabase, user]);
 
   const [anchorNav, setAnchorNav] = React.useState<null | HTMLElement>(null);
   const [anchorUserMenu, setAnchorUserMenu] =
