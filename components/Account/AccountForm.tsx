@@ -25,7 +25,7 @@ export default function AccountForm() {
       setLoading(true);
 
       if (!user) throw new Error("No user");
-      console.log(" Account form user :", user);
+      //console.log(" Account form user :", user);
 
       let { data, error, status } = await supabase
         .from("profiles")
