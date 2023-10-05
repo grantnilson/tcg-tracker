@@ -157,11 +157,7 @@ function LoadingSpinner() {
   return <p>Loading...</p>;
 }
 
-export default function GetDeckProfile({
-  session,
-}: {
-  session: Session | null;
-}) {
+export default function GetDeckProfile() {
   const router = useRouter();
   const supabase = useSupabaseClient<Database>();
 
