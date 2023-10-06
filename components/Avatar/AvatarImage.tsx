@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { Database } from "../../utils/database.types";
 import Image from "next/image";
@@ -13,8 +13,8 @@ export default function AvatarImage({ avatarUrl, size }: AvatarImageProps) {
   const supabase = useSupabaseClient<Database>();
   const [imageUrl, setImageUrl] = useState<string | null>(null);
 
-  useEffect(() => {
-    async function downloadImage(path: string) {
+  const downloadImage = useMemo(
+    () => async (path: string) => {
       try {
         const { data, error } = await supabase.storage
           .from("avatars")
@@ -24,18 +24,23 @@ export default function AvatarImage({ avatarUrl, size }: AvatarImageProps) {
           throw error;
         }
         const url = URL.createObjectURL(data);
-
-        // Check if the new URL is different from the current state value
-        if (url !== avatarUrl) {
-          setImageUrl(url);
-        }
+        setImageUrl(url);
       } catch (error) {
         console.log("Error downloading image: ", error);
       }
-    }
-    console.log("avatar image useEffect");
+    },
+    [supabase]
+  );
+
+  useEffect(() => {
     if (avatarUrl) downloadImage(avatarUrl);
-  }, [avatarUrl, supabase]);
+    console.log("avatar image use effect render");
+
+    // Cleanup when the component unmounts or when avatarUrl changes
+    return () => {
+      if (imageUrl) URL.revokeObjectURL(imageUrl);
+    };
+  }, [avatarUrl, downloadImage]);
 
   return imageUrl ? (
     <Image
