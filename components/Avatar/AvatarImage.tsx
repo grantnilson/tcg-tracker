@@ -34,8 +34,6 @@ export default function AvatarImage({ avatarUrl, size }: AvatarImageProps) {
 
   useEffect(() => {
     if (avatarUrl) downloadImage(avatarUrl);
-    console.log("avatar image use effect render");
-
     // Cleanup when the component unmounts or when avatarUrl changes
     return () => {
       if (imageUrl) URL.revokeObjectURL(imageUrl);
