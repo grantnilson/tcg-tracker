@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   useUser,
   useSupabaseClient,
@@ -30,5 +30,6 @@ export const TierListPage = () => {
     fetchDecks();
     console.log("decks : ", decks);
   }, [supabase]);
+
   return <div>TierList Component</div>;
 };
