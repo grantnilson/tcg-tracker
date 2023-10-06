@@ -13,10 +13,7 @@ export default function DeckList() {
   const supabase = useSupabaseClient<Database>();
   const [decks, setDecks] = useState<Decks[]>([]);
   const [deckName, setDeckName] = useState("");
-  //const [deckID, setDeckID] = useState("");
   const [errorText, setErrorText] = useState("");
-
-  const user = useUser();
 
   useEffect(() => {
     const fetchDecks = async () => {
