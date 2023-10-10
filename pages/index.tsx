@@ -11,11 +11,6 @@ import Account from "../components/Account/AccountForm";
 import AuthForm from "@/components/Auth/AuthForm";
 
 const Home = () => {
-  const session = useSession();
-  const sessionContext = useSessionContext();
-  console.log("home page session : ", session);
-  const supabase = useSupabaseClient();
-
   return (
     <div className="container" style={{ padding: "50px 0 100px 0" }}>
       <div className="row">

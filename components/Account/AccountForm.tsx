@@ -131,7 +131,9 @@ export default function AccountForm() {
       <div>
         <button
           className="button block"
-          onClick={() => supabase.auth.signOut()}
+          onClick={() =>
+            supabase.auth.signOut().then(() => window.location.reload())
+          }
         >
           Sign Out
         </button>
