@@ -9,13 +9,6 @@ export default function Layout({ children }: any) {
 
   const session = useSession();
 
-  if (!session || !session.user) {
-    // If there is no session or no user in the session, you can return a message or a different component.
-    return NextResponse.redirect(new URL("/Accounts"), {
-      status: 302,
-    });
-  }
-
   return (
     <>
       <Navbar />
