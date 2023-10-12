@@ -89,6 +89,15 @@ export default function Navbar() {
     setAnchorUserMenu(null);
   };
 
+  const handleSignout = async () => {
+    try {
+      await supabase.auth.signOut();
+      window.location.reload();
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
+
   const theme = createTheme({
     palette: {
       primary: {
@@ -109,27 +118,7 @@ export default function Navbar() {
           <AppBar position="static" color="primary" enableColorOnDark>
             <Container maxWidth="xl">
               <Toolbar disableGutters>
-                <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
-                  <AdbIcon
-                    sx={{ display: { xs: "none", md: "flex" }, mr: 1 }}
-                  />
-                  <Typography
-                    variant="h6"
-                    noWrap
-                    component="a"
-                    href="#app-bar-with-responsive-menu"
-                    sx={{
-                      mr: 2,
-                      display: { xs: "none", md: "flex" },
-                      fontFamily: "monospace",
-                      fontWeight: 700,
-                      letterSpacing: ".3rem",
-                      color: "inherit",
-                      textDecoration: "none",
-                    }}
-                  >
-                    TCG-Tracker
-                  </Typography>
+                <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "flex" } }}>
                   <IconButton
                     size="large"
                     aria-label="account of current user"
@@ -141,7 +130,7 @@ export default function Navbar() {
                     <MenuIcon />
                   </IconButton>
                   <Menu
-                    id="menu-appbar"
+                    id="pages-menu-appbar"
                     anchorEl={anchorNav}
                     anchorOrigin={{
                       vertical: "bottom",
@@ -154,9 +143,7 @@ export default function Navbar() {
                     }}
                     open={Boolean(anchorNav)}
                     onClose={handleCloseNavMenu}
-                    sx={{
-                      display: { xs: "block", md: "none" },
-                    }}
+                    sx={{ flexGrow: 1, display: { xs: "flex", md: "flex" } }}
                   >
                     {pages.map((page) => (
                       <MenuItem key={page}>
@@ -169,7 +156,6 @@ export default function Navbar() {
                     ))}
                   </Menu>
                 </Box>
-                <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
                 <Typography
                   variant="h5"
                   noWrap
@@ -177,7 +163,7 @@ export default function Navbar() {
                   href="#app-bar-with-responsive-menu"
                   sx={{
                     mr: 2,
-                    display: { xs: "flex", md: "none" },
+                    display: { xs: "flex", md: "flex" },
                     flexGrow: 1,
                     fontFamily: "monospace",
                     fontWeight: 700,
@@ -188,17 +174,6 @@ export default function Navbar() {
                 >
                   TCG-Tracker
                 </Typography>
-                <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-                  {pages.map((page) => (
-                    <Button
-                      key={page}
-                      onClick={handleCloseNavMenu}
-                      sx={{ my: 2, color: "white", display: "block" }}
-                    >
-                      {page}
-                    </Button>
-                  ))}
-                </Box>
                 <Box sx={{ flexGrow: 0 }}>
                   <Tooltip title="Open settings">
                     <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
@@ -211,7 +186,7 @@ export default function Navbar() {
                   </Tooltip>
                   <Menu
                     sx={{ mt: "45px" }}
-                    id="menu-appbar"
+                    id="user-menu-appbar"
                     anchorEl={anchorUserMenu}
                     anchorOrigin={{
                       vertical: "top",
@@ -234,6 +209,11 @@ export default function Navbar() {
                         </Link>
                       </MenuItem>
                     ))}
+                    <MenuItem color="primary" onClick={() => handleSignout()}>
+                      <Typography color="primary" textAlign="center">
+                        Sign Out
+                      </Typography>
+                    </MenuItem>
                   </Menu>
                 </Box>
               </Toolbar>
