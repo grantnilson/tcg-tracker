@@ -89,6 +89,15 @@ export default function Navbar() {
     setAnchorUserMenu(null);
   };
 
+  const handleSignout = async () => {
+    try {
+      await supabase.auth.signOut();
+      window.location.reload();
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
+
   const theme = createTheme({
     palette: {
       primary: {
@@ -165,17 +174,6 @@ export default function Navbar() {
                 >
                   TCG-Tracker
                 </Typography>
-                {/* <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-                  {pages.map((page) => (
-                    <Button
-                      key={page}
-                      onClick={handleCloseNavMenu}
-                      sx={{ my: 2, color: "white", display: "block" }}
-                    >
-                      {page}
-                    </Button>
-                  ))}
-                </Box> */}
                 <Box sx={{ flexGrow: 0 }}>
                   <Tooltip title="Open settings">
                     <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
@@ -211,6 +209,11 @@ export default function Navbar() {
                         </Link>
                       </MenuItem>
                     ))}
+                    <MenuItem color="primary" onClick={() => handleSignout()}>
+                      <Typography color="primary" textAlign="center">
+                        Sign Out
+                      </Typography>
+                    </MenuItem>
                   </Menu>
                 </Box>
               </Toolbar>
