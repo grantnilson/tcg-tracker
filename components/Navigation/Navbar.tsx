@@ -118,44 +118,53 @@ export default function Navbar() {
           <AppBar position="static" color="primary" enableColorOnDark>
             <Container maxWidth="xl">
               <Toolbar disableGutters>
-                <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "flex" } }}>
-                  <IconButton
-                    size="large"
-                    aria-label="account of current user"
-                    aria-controls="menu-appbar"
-                    aria-haspopup="true"
-                    onClick={handleOpenNavMenu}
-                    color="inherit"
-                  >
-                    <MenuIcon />
-                  </IconButton>
-                  <Menu
-                    id="pages-menu-appbar"
-                    anchorEl={anchorNav}
-                    anchorOrigin={{
-                      vertical: "bottom",
-                      horizontal: "left",
-                    }}
-                    keepMounted
-                    transformOrigin={{
-                      vertical: "top",
-                      horizontal: "left",
-                    }}
-                    open={Boolean(anchorNav)}
-                    onClose={handleCloseNavMenu}
-                    sx={{ flexGrow: 1, display: { xs: "flex", md: "flex" } }}
-                  >
-                    {pages.map((page) => (
-                      <MenuItem key={page}>
-                        <Link href={`/${page}`} passHref>
-                          <Typography color="primary" textAlign="center">
-                            {page}
-                          </Typography>
-                        </Link>
-                      </MenuItem>
-                    ))}
-                  </Menu>
-                </Box>
+                {user ? (
+                  <>
+                    <Box
+                      sx={{ flexGrow: 1, display: { xs: "flex", md: "flex" } }}
+                    >
+                      <IconButton
+                        size="large"
+                        aria-label="account of current user"
+                        aria-controls="menu-appbar"
+                        aria-haspopup="true"
+                        onClick={handleOpenNavMenu}
+                        color="inherit"
+                      >
+                        <MenuIcon />
+                      </IconButton>
+                      <Menu
+                        id="pages-menu-appbar"
+                        anchorEl={anchorNav}
+                        anchorOrigin={{
+                          vertical: "bottom",
+                          horizontal: "left",
+                        }}
+                        keepMounted
+                        transformOrigin={{
+                          vertical: "top",
+                          horizontal: "left",
+                        }}
+                        open={Boolean(anchorNav)}
+                        onClose={handleCloseNavMenu}
+                        sx={{
+                          flexGrow: 1,
+                          display: { xs: "flex", md: "flex" },
+                        }}
+                      >
+                        {pages.map((page) => (
+                          <MenuItem key={page}>
+                            <Link href={`/${page}`} passHref>
+                              <Typography color="primary" textAlign="center">
+                                {page}
+                              </Typography>
+                            </Link>
+                          </MenuItem>
+                        ))}
+                      </Menu>
+                    </Box>
+                  </>
+                ) : null}
                 <Typography
                   variant="h5"
                   noWrap
@@ -174,48 +183,55 @@ export default function Navbar() {
                 >
                   TCG-Tracker
                 </Typography>
-                <Box sx={{ flexGrow: 0 }}>
-                  <Tooltip title="Open settings">
-                    <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                      {userAvatar ? (
-                        <AvatarImage avatarUrl={userAvatar} size={40} />
-                      ) : (
-                        <Settings />
-                      )}
-                    </IconButton>
-                  </Tooltip>
-                  <Menu
-                    sx={{ mt: "45px" }}
-                    id="user-menu-appbar"
-                    anchorEl={anchorUserMenu}
-                    anchorOrigin={{
-                      vertical: "top",
-                      horizontal: "right",
-                    }}
-                    keepMounted
-                    transformOrigin={{
-                      vertical: "top",
-                      horizontal: "right",
-                    }}
-                    open={Boolean(anchorUserMenu)}
-                    onClose={handleCloseUserMenu}
-                  >
-                    {userSettings.map((setting) => (
-                      <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                        <Link href={`/${setting}`} passHref>
+                {user ? (
+                  <>
+                    <Box sx={{ flexGrow: 0 }}>
+                      <Tooltip title="Open settings">
+                        <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                          {userAvatar ? (
+                            <AvatarImage avatarUrl={userAvatar} size={40} />
+                          ) : (
+                            <Settings />
+                          )}
+                        </IconButton>
+                      </Tooltip>
+                      <Menu
+                        sx={{ mt: "45px" }}
+                        id="user-menu-appbar"
+                        anchorEl={anchorUserMenu}
+                        anchorOrigin={{
+                          vertical: "top",
+                          horizontal: "right",
+                        }}
+                        keepMounted
+                        transformOrigin={{
+                          vertical: "top",
+                          horizontal: "right",
+                        }}
+                        open={Boolean(anchorUserMenu)}
+                        onClose={handleCloseUserMenu}
+                      >
+                        {userSettings.map((setting) => (
+                          <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                            <Link href={`/${setting}`} passHref>
+                              <Typography color="primary" textAlign="center">
+                                {setting}
+                              </Typography>
+                            </Link>
+                          </MenuItem>
+                        ))}
+                        <MenuItem
+                          color="primary"
+                          onClick={() => handleSignout()}
+                        >
                           <Typography color="primary" textAlign="center">
-                            {setting}
+                            Sign Out
                           </Typography>
-                        </Link>
-                      </MenuItem>
-                    ))}
-                    <MenuItem color="primary" onClick={() => handleSignout()}>
-                      <Typography color="primary" textAlign="center">
-                        Sign Out
-                      </Typography>
-                    </MenuItem>
-                  </Menu>
-                </Box>
+                        </MenuItem>
+                      </Menu>
+                    </Box>
+                  </>
+                ) : null}
               </Toolbar>
             </Container>
           </AppBar>
