@@ -4,11 +4,6 @@ import { useUser, useSession } from "@supabase/auth-helpers-react";
 import { type NextRequest, NextResponse } from "next/server";
 
 export default function Layout({ children }: any) {
-  const user = useUser();
-  console.log("layout user : ", user);
-
-  const session = useSession();
-
   return (
     <>
       <Navbar />
