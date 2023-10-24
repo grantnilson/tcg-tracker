@@ -34,7 +34,8 @@ export const TierListPage = () => {
   function transformData(inputData: Decks[]) {
     return inputData.map((item) => ({
       id: item.deck_id || "",
-      content: item.deck_name || "",
+      name: item.deck_name || "",
+      tier: item.tier || "",
     }));
   }
 
@@ -156,7 +157,7 @@ export const TierListPage = () => {
                               justifyContent: "space-around",
                             }}
                           >
-                            {item.content}
+                            {item.name}
                             <button
                               type="button"
                               onClick={() => {
