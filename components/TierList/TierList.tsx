@@ -29,13 +29,14 @@ export const TierListPage = () => {
     fetchDecks();
   }, [supabase]);
 
-  console.log("decks : ", decks);
+  //console.log("decks : ", decks);
 
   function transformData(inputData: Decks[]) {
     return inputData.map((item) => ({
       id: item.deck_id || "",
       name: item.deck_name || "",
       tier: item.tier || "",
+      elo: item.elo || "",
     }));
   }
 
@@ -52,6 +53,10 @@ export const TierListPage = () => {
     droppableSource: { droppableId: number; index: number },
     droppableDestination: { droppableId: number; index: number }
   ) => {
+    console.log("move source : ", source);
+    console.log("move destination : ", destination);
+    console.log("move droppable source : ", droppableSource);
+    console.log("move droppable destination", droppableDestination);
     const sourceClone = Array.from(source);
     const destClone = Array.from(destination);
     const [removed] = sourceClone.splice(droppableSource.index, 1);
@@ -87,10 +92,12 @@ export const TierListPage = () => {
   });
 
   //const [state, setState] = useState([transformData(decks)]);
-  console.log("state:", state);
+  //console.log("state:", state);
 
   function onDragEnd(result: any) {
     const { source, destination } = result;
+    console.log("source on drag end: ", source);
+    console.log("destination on drag end: ", destination);
 
     // dropped outside the list
     if (!destination) {
