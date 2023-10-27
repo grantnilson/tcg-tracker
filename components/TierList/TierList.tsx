@@ -112,21 +112,22 @@ export const TierListPage = () => {
     if (!destination) {
       return;
     }
-    const sInd = +source.droppableId;
-    const dInd = +destination.droppableId;
+    const sourceIndex = +source.droppableId;
+    const destIndex = +destination.droppableId;
 
-    if (sInd === dInd) {
-      const items = reorder(state[sInd], source.index, destination.index);
-      const newState = [...state];
-      newState[sInd] = items;
-      setState(newState);
+    const newState = [...state];
+
+    if (sourceIndex === destIndex) {
+      // Reordering within the same group
+      const group = newState[sourceIndex];
+      const [draggedItem] = group.decks.splice(source.index, 1);
+      group.decks.splice(destination.index, 0, draggedItem);
     } else {
-      const result = move(state[sInd], state[dInd], source, destination);
-      const newState = [...state];
-      newState[sInd] = result[sInd];
-      newState[dInd] = result[dInd];
-
-      setState(newState.filter((group) => group.length));
+      // Moving from one group to another
+      const sourceGroup = newState[sourceIndex];
+      const destGroup = newState[destIndex];
+      const [draggedItem] = sourceGroup.decks.splice(source.index, 1);
+      destGroup.decks.splice(destination.index, 0, draggedItem);
     }
   }
 
@@ -158,30 +159,31 @@ export const TierListPage = () => {
                       {...provided.droppableProps}
                     >
                       <h2>{el.tier}</h2>
-                      {el.decks.map((item: any, index: any) => (
-                        <Draggable
-                          key={item.id}
-                          draggableId={item.id}
-                          index={index}
-                        >
-                          {(provided, snapshot) => (
-                            <div
-                              ref={provided.innerRef}
-                              {...provided.draggableProps}
-                              {...provided.dragHandleProps}
-                              style={getItemStyle(
-                                snapshot.isDragging,
-                                provided.draggableProps.style
-                              )}
-                            >
+                      {el.decks &&
+                        el.decks.map((item: any, index: any) => (
+                          <Draggable
+                            key={item.id}
+                            draggableId={item.id}
+                            index={index}
+                          >
+                            {(provided, snapshot) => (
                               <div
-                                style={{
-                                  display: "flex",
-                                  justifyContent: "space-around",
-                                }}
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                                style={getItemStyle(
+                                  snapshot.isDragging,
+                                  provided.draggableProps.style
+                                )}
                               >
-                                {item.name}
-                                {/* <button
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    justifyContent: "space-around",
+                                  }}
+                                >
+                                  {item.name}
+                                  {/* <button
                                   type="button"
                                   onClick={() => {
                                     const newState = [...state];
@@ -193,11 +195,11 @@ export const TierListPage = () => {
                                 >
                                   delete
                                 </button> */}
+                                </div>
                               </div>
-                            </div>
-                          )}
-                        </Draggable>
-                      ))}
+                            )}
+                          </Draggable>
+                        ))}
                       {provided.placeholder}
                     </div>
                   );
