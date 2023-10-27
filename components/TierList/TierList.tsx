@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { Database } from "@/utils/database.types";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
-import { transform } from "typescript";
+import { Box, Container } from "@mui/material";
 
 type Decks = Database["public"]["Tables"]["decks"]["Row"];
 
@@ -11,6 +11,7 @@ export const TierListPage = () => {
   const supabase = useSupabaseClient<Database>();
   const [decks, setDecks] = useState<Decks[]>([]);
   const [state, setState] = useState<any>([]);
+  const [editable, setEditable] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchDecks = async () => {
@@ -23,9 +24,7 @@ export const TierListPage = () => {
       if (error) console.log("error : ", error);
       else {
         setDecks(decks);
-        //setState([transformData(decks)]);
         const groupedDecks = groupAndSortDecks(decks);
-        console.log(groupedDecks);
         setState(groupedDecks);
       }
     };
@@ -37,11 +36,11 @@ export const TierListPage = () => {
     const grouped: any = {};
 
     decks.forEach((deck) => {
-      const tier = deck.tier || "Unsorted"; // Default to "Unsorted" if no tier
+      const tier = deck.tier || "Unsorted";
       if (!grouped[tier]) {
         grouped[tier] = [];
       }
-      grouped[tier].push(transformData([deck])[0]); // Apply the same transformation
+      grouped[tier].push(transformData([deck])[0]);
     });
 
     // Sort decks within each group by "elo"
@@ -102,59 +101,121 @@ export const TierListPage = () => {
     }
   }
 
+  const toggleEditable = () => {
+    setEditable(!editable);
+  };
+
+  const saveChanges = async () => {
+    setEditable(false);
+  };
+
+  if (editable) {
+    return (
+      <div>
+        <title>TierList Component</title>
+        <div style={{ display: "flex" }}>
+          <DragDropContext onDragEnd={onDragEnd}>
+            {state.map((el: any, ind: any) => {
+              return (
+                <Droppable key={ind} droppableId={`${ind}`}>
+                  {(provided, snapshot) => {
+                    return (
+                      <div
+                        ref={provided.innerRef}
+                        style={getListStyle(snapshot.isDraggingOver)}
+                        {...provided.droppableProps}
+                      >
+                        <h2>{el.tier}</h2>
+                        {el.decks &&
+                          el.decks.map((item: any, index: any) => (
+                            <Draggable
+                              key={item.id}
+                              draggableId={item.id}
+                              index={index}
+                            >
+                              {(provided, snapshot) => (
+                                <div
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                  style={getItemStyle(
+                                    snapshot.isDragging,
+                                    provided.draggableProps.style
+                                  )}
+                                >
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      justifyContent: "space-around",
+                                    }}
+                                  >
+                                    {item.name}
+                                  </div>
+                                </div>
+                              )}
+                            </Draggable>
+                          ))}
+                        {provided.placeholder}
+                      </div>
+                    );
+                  }}
+                </Droppable>
+              );
+            })}
+          </DragDropContext>
+        </div>
+        <div className="items-center">
+          <button onClick={saveChanges}>Save</button>
+          <button onClick={toggleEditable}>Cancel</button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
       <title>TierList Component</title>
+      <button onClick={toggleEditable}>Edit</button>
+
       <div style={{ display: "flex" }}>
-        <DragDropContext onDragEnd={onDragEnd}>
+        <Container>
           {state.map((el: any, ind: any) => {
             return (
-              <Droppable key={ind} droppableId={`${ind}`}>
-                {(provided, snapshot) => {
-                  return (
-                    <div
-                      ref={provided.innerRef}
-                      style={getListStyle(snapshot.isDraggingOver)}
-                      {...provided.droppableProps}
-                    >
-                      <h2>{el.tier}</h2>
-                      {el.decks &&
-                        el.decks.map((item: any, index: any) => (
-                          <Draggable
-                            key={item.id}
-                            draggableId={item.id}
-                            index={index}
+              <Container key={ind}>
+                <div
+                  style={{
+                    padding: grid * 2,
+                    margin: `0 0 ${grid}px 0`,
+                    background: "grey",
+                  }}
+                >
+                  <h2>{el.tier}</h2>
+                  {el.decks &&
+                    el.decks.map((item: any, index: any) => (
+                      <Container key={item.id}>
+                        <div
+                          style={{
+                            padding: grid * 2,
+                            margin: `0 0 ${grid}px 0`,
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-around",
+                              background: "lightgrey",
+                            }}
                           >
-                            {(provided, snapshot) => (
-                              <div
-                                ref={provided.innerRef}
-                                {...provided.draggableProps}
-                                {...provided.dragHandleProps}
-                                style={getItemStyle(
-                                  snapshot.isDragging,
-                                  provided.draggableProps.style
-                                )}
-                              >
-                                <div
-                                  style={{
-                                    display: "flex",
-                                    justifyContent: "space-around",
-                                  }}
-                                >
-                                  {item.name}
-                                </div>
-                              </div>
-                            )}
-                          </Draggable>
-                        ))}
-                      {provided.placeholder}
-                    </div>
-                  );
-                }}
-              </Droppable>
+                            {item.name}
+                          </div>
+                        </div>
+                      </Container>
+                    ))}
+                </div>
+              </Container>
             );
           })}
-        </DragDropContext>
+        </Container>
       </div>
     </div>
   );
