@@ -64,33 +64,6 @@ export const TierListPage = () => {
       elo: item.elo || "",
     }));
   }
-
-  const reorder = (decks: any[], startIndex: number, endIndex: number) => {
-    const result = Array.from(decks);
-    const [removed] = result.splice(startIndex, 1);
-    result.splice(endIndex, 0, removed);
-    return result;
-  };
-
-  const move = (
-    source: any[],
-    destination: any[],
-    droppableSource: { droppableId: number; index: number },
-    droppableDestination: { droppableId: number; index: number }
-  ) => {
-    const sourceClone = Array.from(source);
-    const destClone = Array.from(destination);
-    const [removed] = sourceClone.splice(droppableSource.index, 1);
-
-    destClone.splice(droppableDestination.index, 0, removed);
-
-    const result: Record<number, any[]> = {};
-    result[droppableSource.droppableId] = sourceClone;
-    result[droppableDestination.droppableId] = destClone;
-
-    return result;
-  };
-
   const grid = 8;
 
   const getItemStyle = (isDragging: any, draggableStyle: any) => ({
@@ -118,12 +91,10 @@ export const TierListPage = () => {
     const newState = [...state];
 
     if (sourceIndex === destIndex) {
-      // Reordering within the same group
       const group = newState[sourceIndex];
       const [draggedItem] = group.decks.splice(source.index, 1);
       group.decks.splice(destination.index, 0, draggedItem);
     } else {
-      // Moving from one group to another
       const sourceGroup = newState[sourceIndex];
       const destGroup = newState[destIndex];
       const [draggedItem] = sourceGroup.decks.splice(source.index, 1);
@@ -134,24 +105,12 @@ export const TierListPage = () => {
   return (
     <div>
       <title>TierList Component</title>
-      <button
-        type="button"
-        onClick={() => {
-          setState([...state, { tier: "New Group", decks: [] }]);
-        }}
-      >
-        Add new group
-      </button>
       <div style={{ display: "flex" }}>
         <DragDropContext onDragEnd={onDragEnd}>
-          {/* {console.log("state : ", state)} */}
           {state.map((el: any, ind: any) => {
-            // console.log("el: ", el);
             return (
               <Droppable key={ind} droppableId={`${ind}`}>
                 {(provided, snapshot) => {
-                  // console.log("provided: ", provided);
-                  // console.log("snapshot", snapshot);
                   return (
                     <div
                       ref={provided.innerRef}
@@ -183,18 +142,6 @@ export const TierListPage = () => {
                                   }}
                                 >
                                   {item.name}
-                                  {/* <button
-                                  type="button"
-                                  onClick={() => {
-                                    const newState = [...state];
-                                    newState[ind].splice(index, 1);
-                                    setState(
-                                      newState.filter((group) => group.length)
-                                    );
-                                  }}
-                                >
-                                  delete
-                                </button> */}
                                 </div>
                               </div>
                             )}
