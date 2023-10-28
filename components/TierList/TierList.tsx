@@ -11,6 +11,7 @@ export const TierListPage = () => {
   const supabase = useSupabaseClient<Database>();
   const [decks, setDecks] = useState<Decks[]>([]);
   const [state, setState] = useState<any>([]);
+  const [toggleEditModeText, setToggleEditModeText] = useState<string>("");
   const [editable, setEditable] = useState<boolean>(false);
 
   useEffect(() => {
@@ -108,115 +109,68 @@ export const TierListPage = () => {
   const saveChanges = async () => {
     setEditable(false);
   };
-
-  if (editable) {
-    return (
-      <div>
-        <title>TierList Component</title>
-        <div style={{ display: "flex" }}>
-          <DragDropContext onDragEnd={onDragEnd}>
-            {state.map((el: any, ind: any) => {
-              return (
-                <Droppable key={ind} droppableId={`${ind}`}>
-                  {(provided, snapshot) => {
-                    return (
-                      <div
-                        ref={provided.innerRef}
-                        style={getListStyle(snapshot.isDraggingOver)}
-                        {...provided.droppableProps}
-                      >
-                        <h2>{el.tier}</h2>
-                        {el.decks &&
-                          el.decks.map((item: any, index: any) => (
-                            <Draggable
-                              key={item.id}
-                              draggableId={item.id}
-                              index={index}
-                            >
-                              {(provided, snapshot) => (
+  return (
+    <div>
+      <title>TierList Component</title>
+      {editable && <button onClick={toggleEditable}>Edit</button>}
+      <div style={{ display: "flex" }}>
+        <DragDropContext onDragEnd={onDragEnd}>
+          {state.map((el: any, ind: any) => {
+            return (
+              <Droppable key={ind} droppableId={`${ind}`}>
+                {(provided, snapshot) => {
+                  return (
+                    <div
+                      ref={provided.innerRef}
+                      style={getListStyle(snapshot.isDraggingOver)}
+                      {...provided.droppableProps}
+                    >
+                      <h2>{el.tier}</h2>
+                      {el.decks &&
+                        el.decks.map((item: any, index: any) => (
+                          <Draggable
+                            key={item.id}
+                            draggableId={item.id}
+                            index={index}
+                            isDragDisabled={editable}
+                          >
+                            {(provided, snapshot) => (
+                              <div
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                                style={getItemStyle(
+                                  snapshot.isDragging,
+                                  provided.draggableProps.style
+                                )}
+                              >
                                 <div
-                                  ref={provided.innerRef}
-                                  {...provided.draggableProps}
-                                  {...provided.dragHandleProps}
-                                  style={getItemStyle(
-                                    snapshot.isDragging,
-                                    provided.draggableProps.style
-                                  )}
+                                  style={{
+                                    display: "flex",
+                                    justifyContent: "space-around",
+                                  }}
                                 >
-                                  <div
-                                    style={{
-                                      display: "flex",
-                                      justifyContent: "space-around",
-                                    }}
-                                  >
-                                    {item.name}
-                                  </div>
+                                  {item.name}
                                 </div>
-                              )}
-                            </Draggable>
-                          ))}
-                        {provided.placeholder}
-                      </div>
-                    );
-                  }}
-                </Droppable>
-              );
-            })}
-          </DragDropContext>
-        </div>
+                              </div>
+                            )}
+                          </Draggable>
+                        ))}
+                      {provided.placeholder}
+                    </div>
+                  );
+                }}
+              </Droppable>
+            );
+          })}
+        </DragDropContext>
+      </div>
+      {!editable && (
         <div className="items-center">
           <button onClick={saveChanges}>Save</button>
           <button onClick={toggleEditable}>Cancel</button>
         </div>
-      </div>
-    );
-  }
-
-  return (
-    <div>
-      <title>TierList Component</title>
-      <button onClick={toggleEditable}>Edit</button>
-
-      <div style={{ display: "flex" }}>
-        <Container>
-          {state.map((el: any, ind: any) => {
-            return (
-              <Container key={ind}>
-                <div
-                  style={{
-                    padding: grid * 2,
-                    margin: `0 0 ${grid}px 0`,
-                    background: "grey",
-                  }}
-                >
-                  <h2>{el.tier}</h2>
-                  {el.decks &&
-                    el.decks.map((item: any, index: any) => (
-                      <Container key={item.id}>
-                        <div
-                          style={{
-                            padding: grid * 2,
-                            margin: `0 0 ${grid}px 0`,
-                          }}
-                        >
-                          <div
-                            style={{
-                              display: "flex",
-                              justifyContent: "space-around",
-                              background: "lightgrey",
-                            }}
-                          >
-                            {item.name}
-                          </div>
-                        </div>
-                      </Container>
-                    ))}
-                </div>
-              </Container>
-            );
-          })}
-        </Container>
-      </div>
+      )}
     </div>
   );
 };
