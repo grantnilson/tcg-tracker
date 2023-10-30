@@ -11,8 +11,8 @@ export const TierListPage = () => {
   const supabase = useSupabaseClient<Database>();
   const [decks, setDecks] = useState<Decks[]>([]);
   const [state, setState] = useState<any>([]);
-  const [toggleEditModeText, setToggleEditModeText] = useState<string>("");
   const [editable, setEditable] = useState<boolean>(false);
+  const [flexDirection, setFlexDirection] = useState<any>("column");
 
   useEffect(() => {
     const fetchDecks = async () => {
@@ -64,6 +64,7 @@ export const TierListPage = () => {
       elo: item.elo || "",
     }));
   }
+
   const grid = 8;
 
   const getItemStyle = (isDragging: any, draggableStyle: any) => ({
@@ -109,11 +110,17 @@ export const TierListPage = () => {
   const saveChanges = async () => {
     setEditable(false);
   };
+
+  const toggleFlexDirection = () => {
+    setFlexDirection(flexDirection === "column" ? "row" : "column");
+  };
+
   return (
     <div>
       <title>TierList Component</title>
+      <button onClick={toggleFlexDirection}>Toggle Direction</button>
       {editable && <button onClick={toggleEditable}>Edit</button>}
-      <div style={{ display: "flex" }}>
+      <div style={{ display: "flex", flexDirection }}>
         <DragDropContext onDragEnd={onDragEnd}>
           {state.map((el: any, ind: any) => {
             return (
