@@ -116,10 +116,30 @@ export const TierListPage = () => {
   };
 
   return (
-    <div>
-      <title>TierList Component</title>
-      <button onClick={toggleFlexDirection}>Toggle Direction</button>
-      {editable && <button onClick={toggleEditable}>Edit</button>}
+    <div style={{}}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          textAlign: "right",
+        }}
+      >
+        {" "}
+        <title>TierList Component</title>
+        <div style={{ display: "inline-block", float: "right" }}>
+          <button className="my-2" onClick={toggleFlexDirection}>
+            Toggle Direction
+          </button>
+        </div>
+        {editable && (
+          <div style={{ display: "inline-block", float: "right" }}>
+            <button className="my-2" onClick={toggleEditable}>
+              Edit
+            </button>
+          </div>
+        )}
+      </div>
+
       <div style={{ display: "flex", flexDirection }}>
         <DragDropContext onDragEnd={onDragEnd}>
           {state.map((el: any, ind: any) => {
