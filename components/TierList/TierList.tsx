@@ -77,7 +77,8 @@ export const TierListPage = () => {
 
   const getListStyle = (isDraggingOver: any) => ({
     background: isDraggingOver ? "white" : "lightgrey",
-    padding: grid,
+    padding: `0 ${grid}px`,
+    margin: "8px",
     width: 250,
   });
 
@@ -124,7 +125,6 @@ export const TierListPage = () => {
           textAlign: "right",
         }}
       >
-        {" "}
         <title>TierList Component</title>
         <div style={{ display: "inline-block", float: "right" }}>
           <button className="my-2" onClick={toggleFlexDirection}>
