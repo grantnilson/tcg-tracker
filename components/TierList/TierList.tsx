@@ -71,15 +71,38 @@ export const TierListPage = () => {
     userSelect: "none",
     padding: grid * 2,
     margin: `0 0 ${grid}px 0`,
+    border: "2px solid transparent",
+    box: "border-box",
     background: isDragging ? "lightgreen" : "grey",
     ...draggableStyle,
+    // border-radius: 2px;
+    // border: 2px solid transparent;
+    // background-color: rgb(255, 255, 255);
+    // box-shadow: none;
+    // box-sizing: border-box;
+    // padding: 8px;
+    // min-height: 40px;
+    // margin-bottom: 8px;
+    // user-select: none;
+    // color: rgb(9, 30, 66);
+    // display: flex;
   });
 
   const getListStyle = (isDraggingOver: any) => ({
     background: isDraggingOver ? "white" : "lightgrey",
     padding: `0 ${grid}px`,
+    opacity: "inherit",
+    transition: "background-color 0.2s ease 0s, opacity 0.1s ease 0s",
+    border: "8px",
     margin: "8px",
     width: 250,
+    //background-color: rgb(235, 236, 240);
+    // opacity: inherit,
+    // padding: 8px 8px 0px,
+    // border: 8px;
+    // transition: background-color 0.2s ease 0s, opacity 0.1s ease 0s;
+    // user-select: none;
+    // width: 250px;
   });
 
   function onDragEnd(result: any) {
