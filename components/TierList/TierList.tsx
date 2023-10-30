@@ -11,8 +11,8 @@ export const TierListPage = () => {
   const supabase = useSupabaseClient<Database>();
   const [decks, setDecks] = useState<Decks[]>([]);
   const [state, setState] = useState<any>([]);
-  const [toggleEditModeText, setToggleEditModeText] = useState<string>("");
   const [editable, setEditable] = useState<boolean>(false);
+  const [flexDirection, setFlexDirection] = useState<any>("column");
 
   useEffect(() => {
     const fetchDecks = async () => {
@@ -64,20 +64,45 @@ export const TierListPage = () => {
       elo: item.elo || "",
     }));
   }
+
   const grid = 8;
 
   const getItemStyle = (isDragging: any, draggableStyle: any) => ({
     userSelect: "none",
     padding: grid * 2,
     margin: `0 0 ${grid}px 0`,
+    border: "2px solid transparent",
+    box: "border-box",
     background: isDragging ? "lightgreen" : "grey",
     ...draggableStyle,
+    // border-radius: 2px;
+    // border: 2px solid transparent;
+    // background-color: rgb(255, 255, 255);
+    // box-shadow: none;
+    // box-sizing: border-box;
+    // padding: 8px;
+    // min-height: 40px;
+    // margin-bottom: 8px;
+    // user-select: none;
+    // color: rgb(9, 30, 66);
+    // display: flex;
   });
 
   const getListStyle = (isDraggingOver: any) => ({
     background: isDraggingOver ? "white" : "lightgrey",
-    padding: grid,
+    padding: `0 ${grid}px`,
+    opacity: "inherit",
+    transition: "background-color 0.2s ease 0s, opacity 0.1s ease 0s",
+    border: "8px",
+    margin: "8px",
     width: 250,
+    //background-color: rgb(235, 236, 240);
+    // opacity: inherit,
+    // padding: 8px 8px 0px,
+    // border: 8px;
+    // transition: background-color 0.2s ease 0s, opacity 0.1s ease 0s;
+    // user-select: none;
+    // width: 250px;
   });
 
   function onDragEnd(result: any) {
@@ -109,11 +134,36 @@ export const TierListPage = () => {
   const saveChanges = async () => {
     setEditable(false);
   };
+
+  const toggleFlexDirection = () => {
+    setFlexDirection(flexDirection === "column" ? "row" : "column");
+  };
+
   return (
-    <div>
-      <title>TierList Component</title>
-      {editable && <button onClick={toggleEditable}>Edit</button>}
-      <div style={{ display: "flex" }}>
+    <div style={{}}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          textAlign: "right",
+        }}
+      >
+        <title>TierList Component</title>
+        <div style={{ display: "inline-block", float: "right" }}>
+          <button className="my-2" onClick={toggleFlexDirection}>
+            Toggle Direction
+          </button>
+        </div>
+        {editable && (
+          <div style={{ display: "inline-block", float: "right" }}>
+            <button className="my-2" onClick={toggleEditable}>
+              Edit
+            </button>
+          </div>
+        )}
+      </div>
+
+      <div style={{ display: "flex", flexDirection }}>
         <DragDropContext onDragEnd={onDragEnd}>
           {state.map((el: any, ind: any) => {
             return (
