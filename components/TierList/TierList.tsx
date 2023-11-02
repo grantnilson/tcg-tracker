@@ -175,7 +175,7 @@ export const TierListPage = () => {
                       style={getListStyle(snapshot.isDraggingOver)}
                       {...provided.droppableProps}
                     >
-                      <h2>{el.tier}</h2>
+                      <h2>Tier : {el.tier}</h2>
                       {el.decks &&
                         el.decks.map((item: any, index: any) => (
                           <Draggable
