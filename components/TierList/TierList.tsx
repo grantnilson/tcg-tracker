@@ -21,7 +21,6 @@ export const TierListPage = () => {
       const existingDeckIndex = prevData.findIndex(
         (deck: any) => deck.id === newObject.id
       );
-
       if (existingDeckIndex !== -1) {
         // If a deck with the same ID already exists, replace it
         prevData[existingDeckIndex] = newObject;
@@ -29,7 +28,6 @@ export const TierListPage = () => {
         // Otherwise, add the newObject to the changed decks
         prevData.push(newObject);
       }
-
       return [...prevData]; // Return a new array to trigger a state update
     });
   };
@@ -68,12 +66,10 @@ export const TierListPage = () => {
       grouped[tier].push(transformData([deck])[0]);
     });
 
-    // Sort decks within each group by "elo"
     for (const tier in grouped) {
       grouped[tier].sort((a: any, b: any) => b.elo - a.elo);
     }
 
-    // Convert grouped decks to an array
     return Object.keys(grouped).map((tier) => ({
       tier,
       decks: grouped[tier],
@@ -124,13 +120,11 @@ export const TierListPage = () => {
       const group = newState[sourceIndex];
       const [draggedItem] = group.decks.splice(source.index, 1);
       group.decks.splice(destination.index, 0, draggedItem);
-      //draggedItem.tier = source.index;
     } else {
       const sourceGroup = newState[sourceIndex];
       const destGroup = newState[destIndex];
       const [draggedItem] = sourceGroup.decks.splice(source.index, 1);
       destGroup.decks.splice(destination.index, 0, draggedItem);
-      //draggedItem.tier = source.index;
       console.log("destination", destGroup);
       draggedItem.tier = destGroup.tier;
       addToChangedDecks(draggedItem);
