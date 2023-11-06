@@ -13,6 +13,28 @@ export const TierListPage = () => {
   const [state, setState] = useState<any>([]);
   const [editable, setEditable] = useState<boolean>(false);
   const [flexDirection, setFlexDirection] = useState<any>("column");
+  const [changedDecks, setChangedDecks] = useState<any>([]);
+
+  const addToChangedDecks = (newObject: any) => {
+    setChangedDecks((prevData: any) => {
+      // Check if a deck with the same ID already exists in prevData
+      const existingDeckIndex = prevData.findIndex(
+        (deck: any) => deck.id === newObject.id
+      );
+      if (existingDeckIndex !== -1) {
+        // If a deck with the same ID already exists, replace it
+        prevData[existingDeckIndex] = newObject;
+      } else {
+        // Otherwise, add the newObject to the changed decks
+        prevData.push(newObject);
+      }
+      return [...prevData]; // Return a new array to trigger a state update
+    });
+  };
+
+  useEffect(() => {
+    console.log("changed decks: ", changedDecks);
+  }, [changedDecks]);
 
   useEffect(() => {
     const fetchDecks = async () => {
@@ -44,12 +66,10 @@ export const TierListPage = () => {
       grouped[tier].push(transformData([deck])[0]);
     });
 
-    // Sort decks within each group by "elo"
     for (const tier in grouped) {
       grouped[tier].sort((a: any, b: any) => b.elo - a.elo);
     }
 
-    // Convert grouped decks to an array
     return Object.keys(grouped).map((tier) => ({
       tier,
       decks: grouped[tier],
@@ -75,17 +95,6 @@ export const TierListPage = () => {
     box: "border-box",
     background: isDragging ? "lightgreen" : "grey",
     ...draggableStyle,
-    // border-radius: 2px;
-    // border: 2px solid transparent;
-    // background-color: rgb(255, 255, 255);
-    // box-shadow: none;
-    // box-sizing: border-box;
-    // padding: 8px;
-    // min-height: 40px;
-    // margin-bottom: 8px;
-    // user-select: none;
-    // color: rgb(9, 30, 66);
-    // display: flex;
   });
 
   const getListStyle = (isDraggingOver: any) => ({
@@ -96,13 +105,6 @@ export const TierListPage = () => {
     border: "8px",
     margin: "8px",
     width: 250,
-    //background-color: rgb(235, 236, 240);
-    // opacity: inherit,
-    // padding: 8px 8px 0px,
-    // border: 8px;
-    // transition: background-color 0.2s ease 0s, opacity 0.1s ease 0s;
-    // user-select: none;
-    // width: 250px;
   });
 
   function onDragEnd(result: any) {
@@ -112,7 +114,6 @@ export const TierListPage = () => {
     }
     const sourceIndex = +source.droppableId;
     const destIndex = +destination.droppableId;
-
     const newState = [...state];
 
     if (sourceIndex === destIndex) {
@@ -124,6 +125,9 @@ export const TierListPage = () => {
       const destGroup = newState[destIndex];
       const [draggedItem] = sourceGroup.decks.splice(source.index, 1);
       destGroup.decks.splice(destination.index, 0, draggedItem);
+      console.log("destination", destGroup);
+      draggedItem.tier = destGroup.tier;
+      addToChangedDecks(draggedItem);
     }
   }
 
