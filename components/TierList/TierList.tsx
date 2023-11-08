@@ -20,7 +20,7 @@ export const TierListPage = () => {
     setChangedDecks((prevData: any) => {
       // Check if a deck with the same ID already exists in prevData
       const existingDeckIndex = prevData.findIndex(
-        (deck: any) => deck.id === newObject.id
+        (deck: any) => deck.deck_id === newObject.deck_id
       );
       if (existingDeckIndex !== -1) {
         // If a deck with the same ID already exists, replace it
@@ -79,8 +79,8 @@ export const TierListPage = () => {
 
   function transformData(inputData: Decks[]) {
     return inputData.map((item) => ({
-      id: item.deck_id || "",
-      name: item.deck_name || "",
+      deck_id: item.deck_id || "",
+      deck_name: item.deck_name || "",
       tier: item.tier || "",
       elo: item.elo || "",
     }));
@@ -138,16 +138,14 @@ export const TierListPage = () => {
 
   const saveChanges = async () => {
     setEditable(false);
+    console.log("changed decks: ", changedDecks);
 
-    // i want to pause the page, then upset the data
-    //generally done like this
-    /*const { data, error } = await supabase
-  .from('countries')
-  .upsert([
-    { id: 1, name: 'Albania' },
-    { id: 2, name: 'Algeria' },
-  ])
-  .select()*/
+    const { data, error } = await supabase
+      .from("decks")
+      .upsert(changedDecks)
+      .select();
+
+    console.log("here");
   };
 
   const toggleFlexDirection = () => {
@@ -194,8 +192,8 @@ export const TierListPage = () => {
                       {el.decks &&
                         el.decks.map((item: any, index: any) => (
                           <Draggable
-                            key={item.id}
-                            draggableId={item.id}
+                            key={item.deck_id}
+                            draggableId={item.deck_id}
                             index={index}
                             isDragDisabled={editable}
                           >
@@ -215,7 +213,7 @@ export const TierListPage = () => {
                                     justifyContent: "space-around",
                                   }}
                                 >
-                                  {item.name}
+                                  {item.deck_name}
                                 </div>
                               </div>
                             )}
