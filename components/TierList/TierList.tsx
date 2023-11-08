@@ -138,6 +138,16 @@ export const TierListPage = () => {
 
   const saveChanges = async () => {
     setEditable(false);
+
+    // i want to pause the page, then upset the data
+    //generally done like this
+    /*const { data, error } = await supabase
+  .from('countries')
+  .upsert([
+    { id: 1, name: 'Albania' },
+    { id: 2, name: 'Algeria' },
+  ])
+  .select()*/
   };
 
   const toggleFlexDirection = () => {
