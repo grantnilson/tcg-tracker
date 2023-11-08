@@ -4,6 +4,7 @@ import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { Database } from "@/utils/database.types";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { Box, Container } from "@mui/material";
+import DeckAvatar from "../Deck/DeckAvatar";
 
 type Decks = Database["public"]["Tables"]["decks"]["Row"];
 
@@ -33,7 +34,7 @@ export const TierListPage = () => {
   };
 
   useEffect(() => {
-    console.log("changed decks: ", changedDecks);
+    //console.log("changed decks: ", changedDecks);
   }, [changedDecks]);
 
   useEffect(() => {
@@ -125,7 +126,7 @@ export const TierListPage = () => {
       const destGroup = newState[destIndex];
       const [draggedItem] = sourceGroup.decks.splice(source.index, 1);
       destGroup.decks.splice(destination.index, 0, draggedItem);
-      console.log("destination", destGroup);
+      //console.log("destination", destGroup);
       draggedItem.tier = destGroup.tier;
       addToChangedDecks(draggedItem);
     }
