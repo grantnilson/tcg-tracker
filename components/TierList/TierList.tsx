@@ -168,7 +168,7 @@ export const TierListPage = () => {
             Toggle Direction
           </button>
         </div>
-        {editable && (
+        {!editable && (
           <div style={{ display: "inline-block", float: "right" }}>
             <button className="my-2" onClick={toggleEditable}>
               Edit
@@ -196,7 +196,7 @@ export const TierListPage = () => {
                             key={item.deck_id}
                             draggableId={item.deck_id}
                             index={index}
-                            isDragDisabled={editable}
+                            isDragDisabled={!editable}
                           >
                             {(provided, snapshot) => (
                               <div
@@ -229,7 +229,7 @@ export const TierListPage = () => {
           })}
         </DragDropContext>
       </div>
-      {!editable && (
+      {editable && (
         <div className="items-center">
           <button onClick={saveChanges}>Save</button>
           <button onClick={toggleEditable}>Cancel</button>
