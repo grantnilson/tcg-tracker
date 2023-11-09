@@ -5,6 +5,7 @@ import { Database } from "@/utils/database.types";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { Box, Container } from "@mui/material";
 import DeckAvatar from "../Deck/DeckAvatar";
+import { EditAttributesOutlined } from "@mui/icons-material";
 
 type Decks = Database["public"]["Tables"]["decks"]["Row"];
 
@@ -82,7 +83,7 @@ export const TierListPage = () => {
       deck_id: item.deck_id || "",
       deck_name: item.deck_name || "",
       tier: item.tier || "",
-      elo: item.elo || "",
+      elo: item.elo || null,
     }));
   }
 
@@ -137,7 +138,6 @@ export const TierListPage = () => {
   };
 
   const saveChanges = async () => {
-    setEditable(false);
     console.log("changed decks: ", changedDecks);
 
     const { data, error } = await supabase
@@ -146,6 +146,7 @@ export const TierListPage = () => {
       .select();
 
     console.log("here");
+    setEditable(!editable);
   };
 
   const toggleFlexDirection = () => {
