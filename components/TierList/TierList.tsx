@@ -153,6 +153,7 @@ export const TierListPage = () => {
     setFlexDirection(flexDirection === "column" ? "row" : "column");
   };
 
+  const copyToClipboard = () => {};
   return (
     <div style={{}}>
       <div
@@ -189,7 +190,44 @@ export const TierListPage = () => {
                       style={getListStyle(snapshot.isDraggingOver)}
                       {...provided.droppableProps}
                     >
-                      <h2>Tier : {el.tier}</h2>
+                      <div
+                        style={{
+                          marginBottom: "60px",
+                        }}
+                      >
+                        <h2
+                          style={{
+                            display: "flex",
+                            float: "left",
+                            color: "black",
+                          }}
+                        >
+                          Tier : {el.tier}
+                        </h2>
+                        <button
+                          style={{
+                            display: "flex",
+                            float: "right",
+                          }}
+                          onClick={() => {
+                            console.log("cliccked the button");
+                            let text = "";
+                            if (el.decks) {
+                              console.log(el.decks);
+                              el.decks.map((item: any) => {
+                                text += item.deck_name + "\n";
+                              });
+                            } else {
+                              console.log("no items");
+                            }
+                            console.log(text);
+                            navigator.clipboard.writeText(text);
+                          }}
+                        >
+                          Copy
+                        </button>
+                      </div>
+
                       {el.decks &&
                         el.decks.map((item: any, index: any) => (
                           <Draggable
