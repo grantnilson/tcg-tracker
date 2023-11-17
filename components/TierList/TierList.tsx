@@ -210,17 +210,14 @@ export const TierListPage = () => {
                             float: "right",
                           }}
                           onClick={() => {
-                            console.log("cliccked the button");
                             let text = "";
                             if (el.decks) {
-                              console.log(el.decks);
                               el.decks.map((item: any) => {
                                 text += item.deck_name + "\n";
                               });
                             } else {
                               console.log("no items");
                             }
-                            console.log(text);
                             navigator.clipboard.writeText(text);
                           }}
                         >
