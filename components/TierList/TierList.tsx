@@ -151,10 +151,6 @@ export const TierListPage = () => {
     setEditable(!editable);
   };
 
-  const toggleFlexDirection = () => {
-    setFlexDirection(flexDirection === "column" ? "row" : "column");
-  };
-
   const copyToClipboard = () => {};
   return (
     <div style={{}}>
@@ -166,11 +162,6 @@ export const TierListPage = () => {
         }}
       >
         <title>TierList Component</title>
-        <div style={{ display: "inline-block", float: "right" }}>
-          <button className="my-2" onClick={toggleFlexDirection}>
-            Toggle Direction
-          </button>
-        </div>
         {!editable && (
           <div style={{ display: "inline-block", float: "right" }}>
             <button className="my-2" onClick={toggleEditable}>
