@@ -4,7 +4,7 @@ import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { Database } from "@/utils/database.types";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { Box, Container } from "@mui/material";
-import DeckAvatar from "../Deck/DeckAvatar";
+import DeckImage from "../Deck/DeckImage";
 import { EditAttributesOutlined } from "@mui/icons-material";
 
 type Decks = Database["public"]["Tables"]["decks"]["Row"];
@@ -82,6 +82,7 @@ export const TierListPage = () => {
     return inputData.map((item) => ({
       deck_id: item.deck_id || "",
       deck_name: item.deck_name || "",
+      deck_image_url: item.deck_image_url || "",
       tier: item.tier || "",
       elo: item.elo || null,
     }));
@@ -96,6 +97,7 @@ export const TierListPage = () => {
     border: "2px solid transparent",
     box: "border-box",
     background: isDragging ? "lightgreen" : "grey",
+    display: "flex",
     ...draggableStyle,
   });
 
@@ -106,7 +108,7 @@ export const TierListPage = () => {
     transition: "background-color 0.2s ease 0s, opacity 0.1s ease 0s",
     border: "8px",
     margin: "8px",
-    width: 250,
+    width: "100%",
   });
 
   function onDragEnd(result: any) {
@@ -226,35 +228,50 @@ export const TierListPage = () => {
                       </div>
 
                       {el.decks &&
-                        el.decks.map((item: any, index: any) => (
-                          <Draggable
-                            key={item.deck_id}
-                            draggableId={item.deck_id}
-                            index={index}
-                            isDragDisabled={!editable}
-                          >
-                            {(provided, snapshot) => (
-                              <div
-                                ref={provided.innerRef}
-                                {...provided.draggableProps}
-                                {...provided.dragHandleProps}
-                                style={getItemStyle(
-                                  snapshot.isDragging,
-                                  provided.draggableProps.style
-                                )}
-                              >
+                        el.decks.map((item: any, index: any) => {
+                          // console.log("item image url:", item.deck_image_url);
+                          return (
+                            // console.log(item.deck_umage_url)
+                            <Draggable
+                              key={item.deck_id}
+                              draggableId={item.deck_id}
+                              index={index}
+                              isDragDisabled={!editable}
+                            >
+                              {(provided, snapshot) => (
                                 <div
-                                  style={{
-                                    display: "flex",
-                                    justifyContent: "space-around",
-                                  }}
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                  style={getItemStyle(
+                                    snapshot.isDragging,
+                                    provided.draggableProps.style
+                                  )}
                                 >
-                                  {item.deck_name}
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                    }}
+                                  >
+                                    <DeckImage
+                                      deckUrl={item.deck_image_url}
+                                      size={60}
+                                    />
+                                  </div>
+
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      //justifyContent: "space-around",
+                                    }}
+                                  >
+                                    {item.deck_name}
+                                  </div>
                                 </div>
-                              </div>
-                            )}
-                          </Draggable>
-                        ))}
+                              )}
+                            </Draggable>
+                          );
+                        })}
                       {provided.placeholder}
                     </div>
                   );
