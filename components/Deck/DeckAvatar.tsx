@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { Database } from "../../utils/database.types";
 import Image from "next/image";
+import DeckImage from "./DeckImage";
 type Decks = Database["public"]["Tables"]["decks"]["Row"];
 
 export default function DeckAvatar({
@@ -84,13 +85,7 @@ export default function DeckAvatar({
   return (
     <div>
       {deckAvatarUrl ? (
-        <Image
-          src={deckAvatarUrl}
-          alt="DeckAvatar"
-          className="deck avatar image"
-          width={size}
-          height={size}
-        />
+        <DeckImage deckUrl={url} size={size} />
       ) : (
         <div
           className="deck avatar no-image"
