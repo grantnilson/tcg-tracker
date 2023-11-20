@@ -25,7 +25,7 @@ import AvatarImage from "../Avatar/AvatarImage";
 
 type Profiles = Database["public"]["Tables"]["profiles"]["Row"];
 
-const pages = ["Decks", "TierList"];
+const pages = ["Decks", "TierList", "GameReport"];
 const userSettings = ["Accounts"];
 
 export default function Navbar() {
