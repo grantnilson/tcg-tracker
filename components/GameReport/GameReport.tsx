@@ -20,8 +20,10 @@ export const GameReportPage = () => {
   const [decks, setDecks] = useState<Decks[]>([]);
   const [selectedDeck1, setSelectedDeck1] = useState<string>("");
   const [selectedDeck2, setSelectedDeck2] = useState<string>("");
+  const [winningDeck, setWinningDeck] = useState<string>("");
   const selectedDeck1Ref = useRef<string>(selectedDeck1);
   const selectedDeck2Ref = useRef<string>(selectedDeck2);
+  const winningDeckRef = useRef<string>(winningDeck);
 
   useEffect(() => {
     const fetchDecks = async () => {
@@ -41,12 +43,10 @@ export const GameReportPage = () => {
 
   const handleFirstChange = (event: any) => {
     const selectedValue = event.target.value as string;
-    console.log("selected val: ", selectedValue);
+    //console.log("selected val: ", selectedValue);
 
-    // Check if the selectedValue is valid before updating the state
     if (decks.some((item) => item.deck_name === selectedValue)) {
       setSelectedDeck1((prevSelectedDeck) => {
-        // Only update the ref if the value changes
         if (prevSelectedDeck !== selectedValue) {
           selectedDeck1Ref.current = selectedValue;
         }
@@ -54,25 +54,39 @@ export const GameReportPage = () => {
       });
     }
 
-    console.log("selected deck 1: ", selectedDeck1Ref.current);
+    //console.log("selected deck 1: ", selectedDeck1Ref.current);
   };
 
   const handleSecondChange = (event: any) => {
     const selectedValue = event.target.value as string;
-    console.log("selected val: ", selectedValue);
+    //console.log("selected val: ", selectedValue);
 
-    // Check if the selectedValue is valid before updating the state
     if (decks.some((item) => item.deck_name === selectedValue)) {
       setSelectedDeck2((prevSelectedDeck) => {
-        // Only update the ref if the value changes
         if (prevSelectedDeck !== selectedValue) {
-          selectedDeck2Ref.current = selectedValue; // Change here
+          selectedDeck2Ref.current = selectedValue;
         }
         return selectedValue;
       });
     }
 
-    console.log("selected deck 2: ", selectedDeck2Ref.current); // Change here
+    //console.log("selected deck 2: ", selectedDeck2Ref.current);
+  };
+
+  const handleWinningDeck = (event: any) => {
+    const selectedValue = event.target.value as string;
+    //console.log("selected val: ", selectedValue);
+
+    if (decks.some((item) => item.deck_name === selectedValue)) {
+      setWinningDeck((prevSelectedDeck) => {
+        if (prevSelectedDeck !== selectedValue) {
+          winningDeckRef.current = selectedValue;
+        }
+        return selectedValue;
+      });
+    }
+
+    //console.log("winning deck: ", winningDeckRef.current);
   };
 
   const theme = createTheme({
@@ -88,44 +102,33 @@ export const GameReportPage = () => {
     },
   });
 
-  // ...
-  // ...
-
   return (
     <div>
       <ThemeProvider theme={theme}>
         <h2>Game Report</h2>
         <Box style={{ paddingTop: "10px", minWidth: 120 }}>
           {decks && decks != undefined ? (
-            // ...
-
-            <FormControl fullWidth>
-              <InputLabel
-                id="demo-simple-select-label"
-                sx={{
-                  color: theme.palette.secondary.light,
-                }}
-              >
-                {selectedDeck1 !== "" ? "Second Deck" : "First Deck"}
-              </InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                label={selectedDeck1 !== "" ? "Deck 2" : "Deck 1"}
-                value={selectedDeck1 !== "" ? selectedDeck2 : selectedDeck1}
-                onChange={
-                  selectedDeck1 !== "" ? handleFirstChange : handleSecondChange
-                }
-                sx={{
-                  borderBlockColor: theme.palette.secondary.contrastText,
-                }}
-              >
-                {decks
-                  .filter(
-                    (item: any) =>
-                      selectedDeck1 !== "" && item.deck_name !== selectedDeck1
-                  )
-                  .map((item: any) => (
+            <div>
+              <FormControl fullWidth>
+                <InputLabel
+                  id="demo-simple-select-label"
+                  sx={{
+                    color: theme.palette.secondary.light,
+                  }}
+                >
+                  First Deck
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  label="Deck 1"
+                  value={selectedDeck1}
+                  onChange={handleFirstChange}
+                  sx={{
+                    borderBlockColor: theme.palette.secondary.contrastText,
+                  }}
+                >
+                  {decks.map((item: any) => (
                     <MenuItem
                       sx={{ color: theme.palette.secondary.contrastText }}
                       key={item.deck_name}
@@ -134,12 +137,85 @@ export const GameReportPage = () => {
                       <Typography color="primary">{item.deck_name}</Typography>
                     </MenuItem>
                   ))}
-              </Select>
-            </FormControl>
+                </Select>
+              </FormControl>
+              {selectedDeck1 !== "" && (
+                <FormControl fullWidth>
+                  <InputLabel
+                    id="demo-simple-select-label2"
+                    sx={{
+                      color: theme.palette.secondary.light,
+                    }}
+                  >
+                    Second Deck
+                  </InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label2"
+                    id="demo-simple-select2"
+                    label="Deck 2"
+                    value={selectedDeck2}
+                    onChange={handleSecondChange}
+                    sx={{
+                      borderBlockColor: theme.palette.secondary.contrastText,
+                    }}
+                  >
+                    {decks
+                      .filter((item: any) => item.deck_name !== selectedDeck1)
+                      .map((item: any) => {
+                        return (
+                          <MenuItem
+                            sx={{ color: theme.palette.secondary.contrastText }}
+                            key={item.deck_name}
+                            value={item.deck_name}
+                          >
+                            <Typography color="primary">
+                              {item.deck_name}
+                            </Typography>
+                          </MenuItem>
+                        );
+                      })}
+                  </Select>
+                </FormControl>
+              )}
+              {selectedDeck1 !== "" && selectedDeck2 != "" && (
+                <FormControl fullWidth>
+                  {" "}
+                  <InputLabel
+                    id="demo-simple-select-label3"
+                    sx={{
+                      color: theme.palette.secondary.light,
+                    }}
+                  >
+                    Winner
+                  </InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label3"
+                    id="demo-simple-select3"
+                    label="Deck 2"
+                    value={winningDeck}
+                    onChange={handleWinningDeck}
+                    sx={{
+                      borderBlockColor: theme.palette.secondary.contrastText,
+                    }}
+                  >
+                    <MenuItem
+                      sx={{ color: theme.palette.secondary.contrastText }}
+                      value={selectedDeck1}
+                    >
+                      <Typography color="primary">{selectedDeck1}</Typography>
+                    </MenuItem>
+                    <MenuItem
+                      sx={{ color: theme.palette.secondary.contrastText }}
+                      value={selectedDeck2}
+                    >
+                      <Typography color="primary">{selectedDeck2}</Typography>
+                    </MenuItem>
+                  </Select>
+                </FormControl>
+              )}
+            </div>
           ) : (
-            // ...
-
-            <div>no decks</div>
+            <div>No Decks Loaded</div>
           )}
         </Box>
       </ThemeProvider>
