@@ -19,7 +19,9 @@ export const GameReportPage = () => {
   const supabase = useSupabaseClient<Database>();
   const [decks, setDecks] = useState<Decks[]>([]);
   const [selectedDeck1, setSelectedDeck1] = useState<string>("");
+  const [selectedDeck2, setSelectedDeck2] = useState<string>("");
   const selectedDeck1Ref = useRef<string>(selectedDeck1);
+  const selectedDeck2Ref = useRef<string>(selectedDeck2);
 
   useEffect(() => {
     const fetchDecks = async () => {
@@ -37,7 +39,7 @@ export const GameReportPage = () => {
     fetchDecks();
   }, [supabase]);
 
-  const handleChange = (event: any) => {
+  const handleFirstChange = (event: any) => {
     const selectedValue = event.target.value as string;
     console.log("selected val: ", selectedValue);
 
@@ -55,6 +57,24 @@ export const GameReportPage = () => {
     console.log("selected deck 1: ", selectedDeck1Ref.current);
   };
 
+  const handleSecondChange = (event: any) => {
+    const selectedValue = event.target.value as string;
+    console.log("selected val: ", selectedValue);
+
+    // Check if the selectedValue is valid before updating the state
+    if (decks.some((item) => item.deck_name === selectedValue)) {
+      setSelectedDeck2((prevSelectedDeck) => {
+        // Only update the ref if the value changes
+        if (prevSelectedDeck !== selectedValue) {
+          selectedDeck2Ref.current = selectedValue; // Change here
+        }
+        return selectedValue;
+      });
+    }
+
+    console.log("selected deck 2: ", selectedDeck2Ref.current); // Change here
+  };
+
   const theme = createTheme({
     palette: {
       primary: {
@@ -68,39 +88,57 @@ export const GameReportPage = () => {
     },
   });
 
+  // ...
+  // ...
+
   return (
     <div>
       <ThemeProvider theme={theme}>
         <h2>Game Report</h2>
-        <Box sx={{ minWidth: 120 }}>
+        <Box style={{ paddingTop: "10px", minWidth: 120 }}>
           {decks && decks != undefined ? (
+            // ...
+
             <FormControl fullWidth>
               <InputLabel
                 id="demo-simple-select-label"
-                sx={{ color: theme.palette.getContrastText("#fff") }}
+                sx={{
+                  color: theme.palette.secondary.light,
+                }}
               >
-                Decks
+                {selectedDeck1 !== "" ? "Second Deck" : "First Deck"}
               </InputLabel>
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
-                label="Deck 1"
-                value={selectedDeck1}
-                onChange={handleChange}
-                sx={{ color: theme.palette.getContrastText("#fff") }}
+                label={selectedDeck1 !== "" ? "Deck 2" : "Deck 1"}
+                value={selectedDeck1 !== "" ? selectedDeck2 : selectedDeck1}
+                onChange={
+                  selectedDeck1 !== "" ? handleFirstChange : handleSecondChange
+                }
+                sx={{
+                  borderBlockColor: theme.palette.secondary.contrastText,
+                }}
               >
-                {decks.map((item: any) => (
-                  <MenuItem
-                    sx={{ color: theme.palette.getContrastText("#fff") }}
-                    key={item.deck_name}
-                    value={item.deck_name}
-                  >
-                    <Typography color="primary">{item.deck_name}</Typography>
-                  </MenuItem>
-                ))}
+                {decks
+                  .filter(
+                    (item: any) =>
+                      selectedDeck1 !== "" && item.deck_name !== selectedDeck1
+                  )
+                  .map((item: any) => (
+                    <MenuItem
+                      sx={{ color: theme.palette.secondary.contrastText }}
+                      key={item.deck_name}
+                      value={item.deck_name}
+                    >
+                      <Typography color="primary">{item.deck_name}</Typography>
+                    </MenuItem>
+                  ))}
               </Select>
             </FormControl>
           ) : (
+            // ...
+
             <div>no decks</div>
           )}
         </Box>
