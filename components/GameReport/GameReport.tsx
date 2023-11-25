@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { Database } from "@/utils/database.types";
 
@@ -19,7 +19,7 @@ export const GameReportPage = () => {
   const supabase = useSupabaseClient<Database>();
   const [decks, setDecks] = useState<Decks[]>([]);
   const [selectedDeck1, setSelectedDeck1] = useState<string>("");
-  const firstSelectedDeck = selectedDeck1;
+  const selectedDeck1Ref = useRef<string>(selectedDeck1);
 
   useEffect(() => {
     const fetchDecks = async () => {
@@ -35,20 +35,24 @@ export const GameReportPage = () => {
     };
 
     fetchDecks();
-    console.log("decks: ", decks);
   }, [supabase]);
 
-  const handleChange = (event: SelectChangeEvent) => {
-    console.log("event:", event);
+  const handleChange = (event: any) => {
     const selectedValue = event.target.value as string;
     console.log("selected val: ", selectedValue);
 
     // Check if the selectedValue is valid before updating the state
     if (decks.some((item) => item.deck_name === selectedValue)) {
-      setSelectedDeck1(selectedValue);
+      setSelectedDeck1((prevSelectedDeck) => {
+        // Only update the ref if the value changes
+        if (prevSelectedDeck !== selectedValue) {
+          selectedDeck1Ref.current = selectedValue;
+        }
+        return selectedValue;
+      });
     }
 
-    console.log("selected deck 1: ", selectedDeck1);
+    console.log("selected deck 1: ", selectedDeck1Ref.current);
   };
 
   const theme = createTheme({
@@ -89,6 +93,7 @@ export const GameReportPage = () => {
                   <MenuItem
                     sx={{ color: theme.palette.getContrastText("#fff") }}
                     key={item.deck_name}
+                    value={item.deck_name}
                   >
                     <Typography color="primary">{item.deck_name}</Typography>
                   </MenuItem>
