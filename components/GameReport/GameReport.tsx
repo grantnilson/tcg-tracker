@@ -21,9 +21,11 @@ export const GameReportPage = () => {
   const [selectedDeck1, setSelectedDeck1] = useState<string>("");
   const [selectedDeck2, setSelectedDeck2] = useState<string>("");
   const [winningDeck, setWinningDeck] = useState<string>("");
+  const [firstDeck, setFirstDeck] = useState<string>("");
   const selectedDeck1Ref = useRef<string>(selectedDeck1);
   const selectedDeck2Ref = useRef<string>(selectedDeck2);
   const winningDeckRef = useRef<string>(winningDeck);
+  const firstDeckRef = useRef<string>(firstDeck);
 
   useEffect(() => {
     const fetchDecks = async () => {
@@ -43,8 +45,6 @@ export const GameReportPage = () => {
 
   const handleFirstChange = (event: any) => {
     const selectedValue = event.target.value as string;
-    //console.log("selected val: ", selectedValue);
-
     if (decks.some((item) => item.deck_name === selectedValue)) {
       setSelectedDeck1((prevSelectedDeck) => {
         if (prevSelectedDeck !== selectedValue) {
@@ -53,14 +53,10 @@ export const GameReportPage = () => {
         return selectedValue;
       });
     }
-
-    //console.log("selected deck 1: ", selectedDeck1Ref.current);
   };
 
   const handleSecondChange = (event: any) => {
     const selectedValue = event.target.value as string;
-    //console.log("selected val: ", selectedValue);
-
     if (decks.some((item) => item.deck_name === selectedValue)) {
       setSelectedDeck2((prevSelectedDeck) => {
         if (prevSelectedDeck !== selectedValue) {
@@ -69,14 +65,10 @@ export const GameReportPage = () => {
         return selectedValue;
       });
     }
-
-    //console.log("selected deck 2: ", selectedDeck2Ref.current);
   };
 
   const handleWinningDeck = (event: any) => {
     const selectedValue = event.target.value as string;
-    //console.log("selected val: ", selectedValue);
-
     if (decks.some((item) => item.deck_name === selectedValue)) {
       setWinningDeck((prevSelectedDeck) => {
         if (prevSelectedDeck !== selectedValue) {
@@ -85,8 +77,18 @@ export const GameReportPage = () => {
         return selectedValue;
       });
     }
+  };
 
-    //console.log("winning deck: ", winningDeckRef.current);
+  const handleFirstDeck = (event: any) => {
+    const selectedValue = event.target.value as string;
+    if (decks.some((item) => item.deck_name === selectedValue)) {
+      setFirstDeck((prevSelectedDeck) => {
+        if (prevSelectedDeck !== selectedValue) {
+          winningDeckRef.current = selectedValue;
+        }
+        return selectedValue;
+      });
+    }
   };
 
   const theme = createTheme({
@@ -178,40 +180,76 @@ export const GameReportPage = () => {
                 </FormControl>
               )}
               {selectedDeck1 !== "" && selectedDeck2 != "" && (
-                <FormControl fullWidth>
-                  {" "}
-                  <InputLabel
-                    id="demo-simple-select-label3"
-                    sx={{
-                      color: theme.palette.secondary.light,
-                    }}
-                  >
-                    Winner
-                  </InputLabel>
-                  <Select
-                    labelId="demo-simple-select-label3"
-                    id="demo-simple-select3"
-                    label="Deck 2"
-                    value={winningDeck}
-                    onChange={handleWinningDeck}
-                    sx={{
-                      borderBlockColor: theme.palette.secondary.contrastText,
-                    }}
-                  >
-                    <MenuItem
-                      sx={{ color: theme.palette.secondary.contrastText }}
-                      value={selectedDeck1}
+                <div>
+                  <FormControl fullWidth>
+                    {" "}
+                    <InputLabel
+                      id="demo-simple-select-label3"
+                      sx={{
+                        color: theme.palette.secondary.light,
+                      }}
                     >
-                      <Typography color="primary">{selectedDeck1}</Typography>
-                    </MenuItem>
-                    <MenuItem
-                      sx={{ color: theme.palette.secondary.contrastText }}
-                      value={selectedDeck2}
+                      Winner
+                    </InputLabel>
+                    <Select
+                      labelId="demo-simple-select-label3"
+                      id="demo-simple-select3"
+                      label="Winning Deck"
+                      value={winningDeck}
+                      onChange={handleWinningDeck}
+                      sx={{
+                        borderBlockColor: theme.palette.secondary.contrastText,
+                      }}
                     >
-                      <Typography color="primary">{selectedDeck2}</Typography>
-                    </MenuItem>
-                  </Select>
-                </FormControl>
+                      <MenuItem
+                        sx={{ color: theme.palette.secondary.contrastText }}
+                        value={selectedDeck1}
+                      >
+                        <Typography color="primary">{selectedDeck1}</Typography>
+                      </MenuItem>
+                      <MenuItem
+                        sx={{ color: theme.palette.secondary.contrastText }}
+                        value={selectedDeck2}
+                      >
+                        <Typography color="primary">{selectedDeck2}</Typography>
+                      </MenuItem>
+                    </Select>
+                  </FormControl>
+                  <FormControl fullWidth>
+                    {" "}
+                    <InputLabel
+                      id="demo-simple-select-label4"
+                      sx={{
+                        color: theme.palette.secondary.light,
+                      }}
+                    >
+                      Which Deck went First?
+                    </InputLabel>
+                    <Select
+                      labelId="demo-simple-select-label4"
+                      id="demo-simple-select4"
+                      label="First Deck"
+                      value={firstDeck}
+                      onChange={handleFirstDeck}
+                      sx={{
+                        borderBlockColor: theme.palette.secondary.contrastText,
+                      }}
+                    >
+                      <MenuItem
+                        sx={{ color: theme.palette.secondary.contrastText }}
+                        value={selectedDeck1}
+                      >
+                        <Typography color="primary">{selectedDeck1}</Typography>
+                      </MenuItem>
+                      <MenuItem
+                        sx={{ color: theme.palette.secondary.contrastText }}
+                        value={selectedDeck2}
+                      >
+                        <Typography color="primary">{selectedDeck2}</Typography>
+                      </MenuItem>
+                    </Select>
+                  </FormControl>
+                </div>
               )}
             </div>
           ) : (
